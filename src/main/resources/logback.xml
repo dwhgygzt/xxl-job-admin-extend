@@ -21,7 +21,7 @@
         </encoder>
     </appender>
 
-    <logger name="com.xxl.job.admin.dao" level="DEBUG"/>
+    <logger name="com.xxl.job.admin.dao" level="INFO"/>
     <root level="info">
         <appender-ref ref="console"/>
         <appender-ref ref="file"/>
