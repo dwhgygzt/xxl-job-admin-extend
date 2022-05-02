@@ -78,7 +78,7 @@
 		WHERE id = #{id}
 	</update>
 
-	<delete id="delete" parameterType="java.util.HashMap">
+	<delete id="delete" parameterType="java.lang.Integer">
 		DELETE
 		FROM xxl_job_user
 		WHERE id = #{id}

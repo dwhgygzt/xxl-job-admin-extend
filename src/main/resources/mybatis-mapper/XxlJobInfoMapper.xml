@@ -65,54 +65,9 @@
 		t.trigger_next_time
 	</sql>
 
-	<select id="pageList" parameterType="java.util.HashMap" resultMap="XxlJobInfo">
-		SELECT <include refid="Base_Column_List" />
-		FROM xxl_job_info AS t
-		<trim prefix="WHERE" prefixOverrides="AND | OR" >
-			<if test="jobGroup gt 0">
-				AND t.job_group = #{jobGroup}
-			</if>
-            <if test="triggerStatus gte 0">
-                AND t.trigger_status = #{triggerStatus}
-            </if>
-			<if test="jobDesc != null and jobDesc != ''">
-				AND t.job_desc like CONCAT(CONCAT('%', #{jobDesc}), '%')
-			</if>
-			<if test="executorHandler != null and executorHandler != ''">
-				AND t.executor_handler like CONCAT(CONCAT('%', #{executorHandler}), '%')
-			</if>
-			<if test="author != null and author != ''">
-				AND t.author like CONCAT(CONCAT('%', #{author}), '%')
-			</if>
-		</trim>
-		ORDER BY id DESC
-		LIMIT #{offset}, #{pagesize}
-	</select>
-
-	<select id="pageListCount" parameterType="java.util.HashMap" resultType="int">
-		SELECT count(1)
-		FROM xxl_job_info AS t
-		<trim prefix="WHERE" prefixOverrides="AND | OR" >
-			<if test="jobGroup gt 0">
-				AND t.job_group = #{jobGroup}
-			</if>
-            <if test="triggerStatus gte 0">
-                AND t.trigger_status = #{triggerStatus}
-            </if>
-			<if test="jobDesc != null and jobDesc != ''">
-				AND t.job_desc like CONCAT(CONCAT('%', #{jobDesc}), '%')
-			</if>
-			<if test="executorHandler != null and executorHandler != ''">
-				AND t.executor_handler like CONCAT(CONCAT('%', #{executorHandler}), '%')
-			</if>
-			<if test="author != null and author != ''">
-				AND t.author like CONCAT(CONCAT('%', #{author}), '%')
-			</if>
-		</trim>
-	</select>
-
-	<insert id="save" parameterType="com.xxl.job.admin.core.model.XxlJobInfo" useGeneratedKeys="true" keyProperty="id" >
+	<insert id="save" parameterType="com.xxl.job.admin.core.model.XxlJobInfo">
 		INSERT INTO xxl_job_info (
+		    id,
 			job_group,
 			job_desc,
 			add_time,
@@ -137,6 +92,7 @@
 			trigger_last_time,
 			trigger_next_time
 		) VALUES (
+			#{id},
 			#{jobGroup},
 			#{jobDesc},
 			#{addTime},
@@ -161,10 +117,6 @@
 			#{triggerLastTime},
 			#{triggerNextTime}
 		);
-		<!--<selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
-			SELECT LAST_INSERT_ID()
-			/*SELECT @@IDENTITY AS id*/
-		</selectKey>-->
 	</insert>
 
 	<select id="loadById" parameterType="java.util.HashMap" resultMap="XxlJobInfo">
@@ -219,15 +171,6 @@
 	</select>
 
 
-	<select id="scheduleJobQuery" parameterType="java.util.HashMap" resultMap="XxlJobInfo">
-		SELECT <include refid="Base_Column_List" />
-		FROM xxl_job_info AS t
-		WHERE t.trigger_status = 1
-			and t.trigger_next_time <![CDATA[ <= ]]> #{maxNextTime}
-		ORDER BY id ASC
-		LIMIT #{pagesize}
-	</select>
-
 	<update id="scheduleUpdate" parameterType="com.xxl.job.admin.core.model.XxlJobInfo"  >
 		UPDATE xxl_job_info
 		SET
@@ -236,5 +179,9 @@
 			trigger_status = #{triggerStatus}
 		WHERE id = #{id}
 	</update>
+
+	<select id="maxId" resultType="java.lang.Integer">
+		SELECT MAX(id) AS MAX_ID FROM xxl_job_info
+	</select>
 
 </mapper>

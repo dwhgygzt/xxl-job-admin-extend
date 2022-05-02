@@ -1,6 +1,10 @@
 package com.xxl.job.admin.controller;
 
+import cn.hutool.core.util.StrUtil;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.xxl.job.admin.core.model.XxlJobGroup;
+import com.xxl.job.admin.core.model.XxlJobInfo;
 import com.xxl.job.admin.core.model.XxlJobRegistry;
 import com.xxl.job.admin.core.util.I18nUtil;
 import com.xxl.job.admin.dao.XxlJobGroupDao;
@@ -13,6 +17,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -45,10 +50,20 @@ public class JobGroupController {
                                         @RequestParam(required = false, defaultValue = "0") int start,
                                         @RequestParam(required = false, defaultValue = "10") int length,
                                         String appname, String title) {
-
+        Example example = new Example(XxlJobGroup.class);
+        Example.Criteria criteria = example.createCriteria();
+        if (StrUtil.isNotBlank(appname)) {
+            criteria.andLike("appname", String.format("%%%s%%", appname));
+        }
+        if (StrUtil.isNotBlank(title)) {
+            criteria.andLike("title", String.format("%%%s%%", title));
+        }
+        example.orderBy("appname").orderBy("title").orderBy("id");
+        PageInfo<XxlJobGroup> pageInfo = PageHelper.startPage((start / length + 1), length, true)
+                .doSelectPageInfo(() -> xxlJobGroupDao.selectByExample(example));
         // page query
-        List<XxlJobGroup> list = xxlJobGroupDao.pageList(start, length, appname, title);
-        int listCount = xxlJobGroupDao.pageListCount(start, length, appname, title);
+        List<XxlJobGroup> list = pageInfo.getList();
+        long listCount = pageInfo.getTotal();
 
         // package result
         Map<String, Object> maps = new HashMap<String, Object>();
@@ -99,6 +114,10 @@ public class JobGroupController {
 
         // process
         xxlJobGroup.setUpdateTime(new Date());
+
+        synchronized (this) {
+            xxlJobGroup.setId(xxlJobGroupDao.maxId() + 1);
+        }
 
         int ret = xxlJobGroupDao.save(xxlJobGroup);
         return (ret > 0) ? ReturnT.SUCCESS : ReturnT.FAIL;
@@ -178,7 +197,12 @@ public class JobGroupController {
     public ReturnT<String> remove(int id) {
 
         // valid
-        int count = xxlJobInfoDao.pageListCount(0, 10, id, -1, null, null, null);
+        Example example = new Example(XxlJobInfo.class);
+        Example.Criteria criteria = example.createCriteria();
+        if (id > 0) {
+            criteria.andEqualTo("jobGroup", id);
+        }
+        int count = xxlJobInfoDao.selectCountByExample(example);
         if (count > 0) {
             return new ReturnT<>(500, I18nUtil.getString("jobgroup_del_limit_0"));
         }

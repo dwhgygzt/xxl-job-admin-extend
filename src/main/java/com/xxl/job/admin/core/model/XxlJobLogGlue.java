@@ -1,75 +1,98 @@
 package com.xxl.job.admin.core.model;
 
+import com.xxl.job.admin.core.conf.SnowflakeConfig;
+
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.Date;
 
 /**
- * xxl-job log for glue, used to track job code process
- * @author xuxueli 2016-5-19 17:57:46
+ * @author xuxueli 2019-05-04 16:43:12
  */
+@Table(name = "xxl_job_log")
 public class XxlJobLogGlue {
-	
-	private int id;
-	private int jobId;				// 任务主键ID
-	private String glueType;		// GLUE类型	#com.xxl.job.core.glue.GlueTypeEnum
-	private String glueSource;
-	private String glueRemark;
-	private Date addTime;
-	private Date updateTime;
 
-	public int getId() {
-		return id;
-	}
+    public XxlJobLogGlue() {
+        this.id = SnowflakeConfig.nextId();
+    }
 
-	public void setId(int id) {
-		this.id = id;
-	}
+    @Id
+    @Column(name = "id")
+    private long id;
 
-	public int getJobId() {
-		return jobId;
-	}
+    @Column(name = "job_id")
+    private int jobId;                // 任务主键ID
 
-	public void setJobId(int jobId) {
-		this.jobId = jobId;
-	}
+    @Column(name = "glue_type")
+    private String glueType;        // GLUE类型	#com.xxl.job.core.glue.GlueTypeEnum
 
-	public String getGlueType() {
-		return glueType;
-	}
+    @Column(name = "glue_source")
+    private String glueSource;
 
-	public void setGlueType(String glueType) {
-		this.glueType = glueType;
-	}
+    @Column(name = "glue_remark")
+    private String glueRemark;
 
-	public String getGlueSource() {
-		return glueSource;
-	}
+    @Column(name = "add_time")
+    private Date addTime;
 
-	public void setGlueSource(String glueSource) {
-		this.glueSource = glueSource;
-	}
+    @Column(name = "update_time")
+    private Date updateTime;
 
-	public String getGlueRemark() {
-		return glueRemark;
-	}
+    public long getId() {
+        return id;
+    }
 
-	public void setGlueRemark(String glueRemark) {
-		this.glueRemark = glueRemark;
-	}
+    public void setId(long id) {
+        this.id = id;
+    }
 
-	public Date getAddTime() {
-		return addTime;
-	}
+    public int getJobId() {
+        return jobId;
+    }
 
-	public void setAddTime(Date addTime) {
-		this.addTime = addTime;
-	}
+    public void setJobId(int jobId) {
+        this.jobId = jobId;
+    }
 
-	public Date getUpdateTime() {
-		return updateTime;
-	}
+    public String getGlueType() {
+        return glueType;
+    }
 
-	public void setUpdateTime(Date updateTime) {
-		this.updateTime = updateTime;
-	}
+    public void setGlueType(String glueType) {
+        this.glueType = glueType;
+    }
+
+    public String getGlueSource() {
+        return glueSource;
+    }
+
+    public void setGlueSource(String glueSource) {
+        this.glueSource = glueSource;
+    }
+
+    public String getGlueRemark() {
+        return glueRemark;
+    }
+
+    public void setGlueRemark(String glueRemark) {
+        this.glueRemark = glueRemark;
+    }
+
+    public Date getAddTime() {
+        return addTime;
+    }
+
+    public void setAddTime(Date addTime) {
+        this.addTime = addTime;
+    }
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
 
 }

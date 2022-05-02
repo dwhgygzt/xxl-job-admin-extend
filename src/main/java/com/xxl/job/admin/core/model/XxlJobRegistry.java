@@ -1,23 +1,43 @@
 package com.xxl.job.admin.core.model;
 
+import com.xxl.job.admin.core.conf.SnowflakeConfig;
+
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.Date;
 
 /**
- * Created by xuxueli on 16/9/30.
+ * @author xuxueli 2019-05-04 16:43:12
  */
+@Table(name = "xxl_job_registry")
 public class XxlJobRegistry {
 
-    private int id;
+    public XxlJobRegistry() {
+        this.id = SnowflakeConfig.nextId();
+    }
+
+    @Id
+    @Column(name = "id")
+    private long id;
+
+    @Column(name = "registry_group")
     private String registryGroup;
+
+    @Column(name = "registry_key")
     private String registryKey;
+
+    @Column(name = "registry_value")
     private String registryValue;
+
+    @Column(name = "update_time")
     private Date updateTime;
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

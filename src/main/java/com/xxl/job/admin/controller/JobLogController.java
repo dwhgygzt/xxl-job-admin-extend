@@ -1,5 +1,7 @@
 package com.xxl.job.admin.controller;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.xxl.job.admin.core.complete.XxlJobCompleter;
 import com.xxl.job.admin.core.exception.XxlJobException;
 import com.xxl.job.admin.core.model.XxlJobGroup;
@@ -23,6 +25,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -93,7 +96,7 @@ public class JobLogController {
                                         int jobGroup, int jobId, int logStatus, String filterTime) {
 
         // valid permission
-		// 仅管理员支持查询全部；普通用户仅支持查询有权限的 jobGroup
+        // 仅管理员支持查询全部；普通用户仅支持查询有权限的 jobGroup
         JobInfoController.validPermission(request, jobGroup);
 
         // parse param
@@ -108,16 +111,42 @@ public class JobLogController {
         }
 
         // page query
-        List<XxlJobLog> list = xxlJobLogDao.pageList(start, length, jobGroup, jobId, triggerTimeStart, triggerTimeEnd, logStatus);
-        int listCount = xxlJobLogDao.pageListCount(start, length, jobGroup, jobId, triggerTimeStart, triggerTimeEnd, logStatus);
+        Example example = new Example(XxlJobLog.class);
+        Example.Criteria criteria = example.createCriteria();
+        if (jobGroup >= 0) {
+            criteria.andEqualTo("jobGroup", jobGroup);
+        }
+        if (jobId > 0) {
+            criteria.andEqualTo("jobId", jobId);
+        }
+        if (triggerTimeStart != null) {
+            criteria.andGreaterThanOrEqualTo("triggerTime", triggerTimeStart);
+        }
+        if (triggerTimeEnd != null) {
+            criteria.andLessThanOrEqualTo("triggerTime", triggerTimeEnd);
+        }
+        if (logStatus == 1) {
+            criteria.andEqualTo("handleCode", 200);
+        } else if (logStatus == 2) {
+            criteria.andCondition(" (trigger_code NOT IN (0, 200) OR handle_code NOT IN (0, 200))");
+        } else if (logStatus == 3) {
+            criteria.andCondition(" ( trigger_code = 200 AND  handle_code = 0) ");
+        }
+
+        example.orderBy("triggerTime").desc();
+        PageInfo<XxlJobLog> pageInfo = PageHelper.startPage((start / length + 1), length, true)
+                .doSelectPageInfo(() -> xxlJobLogDao.selectByExample(example));
+        // page query
+        List<XxlJobLog> list = pageInfo.getList();
+        long listCount = pageInfo.getTotal();
 
         // package result
         Map<String, Object> maps = new HashMap<String, Object>();
-		// 总记录数
+        // 总记录数
         maps.put("recordsTotal", listCount);
-		// 过滤后的总记录数
+        // 过滤后的总记录数
         maps.put("recordsFiltered", listCount);
-		// 分页列表
+        // 分页列表
         maps.put("data", list);
         return maps;
     }
@@ -201,7 +230,7 @@ public class JobLogController {
     public ReturnT<String> clearLog(int jobGroup, int jobId, int type) {
 
         Date clearBeforeTime = null;
-        int clearBeforeNum = 0;
+        int clearBeforeNum = -1;
         if (type == 1) {
             clearBeforeTime = DateUtil.addMonths(new Date(), -1);    // 清理一个月之前日志数据
         } else if (type == 2) {
@@ -224,7 +253,7 @@ public class JobLogController {
             return new ReturnT<String>(ReturnT.FAIL_CODE, I18nUtil.getString("joblog_clean_type_unvalid"));
         }
 
-        List<Long> logIds = null;
+        List<Long> logIds;
         do {
             logIds = xxlJobLogDao.findClearLogIds(jobGroup, jobId, clearBeforeTime, clearBeforeNum, 1000);
             if (logIds != null && logIds.size() > 0) {
