@@ -1,0 +1,8 @@
+server:
+  port: 8849
+  servlet:
+    context-path: /xxl-job-admin
+
+spring:
+  profiles:
+    active: prod
