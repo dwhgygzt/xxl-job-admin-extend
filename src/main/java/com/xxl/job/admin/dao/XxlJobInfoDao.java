@@ -20,7 +20,7 @@ public interface XxlJobInfoDao extends MyBaseMapper<XxlJobInfo> {
 
     int update(XxlJobInfo xxlJobInfo);
 
-    int delete(@Param("id") int id);
+    int remove(@Param("id") int id);
 
     List<XxlJobInfo> getJobsByGroup(@Param("jobGroup") int jobGroup);
 

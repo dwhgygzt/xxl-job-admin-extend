@@ -19,25 +19,26 @@ public class XxlJobLogReport {
 
     @Id
     @Column(name = "id")
-    private long id;
+    private Long id;
 
     @Column(name = "trigger_day")
     private Date triggerDay;
 
     @Column(name = "running_count")
-    private int runningCount;
+    private Integer runningCount;
 
     @Column(name = "suc_count")
-    private int sucCount;
+    private Integer sucCount;
 
     @Column(name = "fail_count")
-    private int failCount;
+    private Integer failCount;
 
-    public long getId() {
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -49,27 +50,27 @@ public class XxlJobLogReport {
         this.triggerDay = triggerDay;
     }
 
-    public int getRunningCount() {
+    public Integer getRunningCount() {
         return runningCount;
     }
 
-    public void setRunningCount(int runningCount) {
+    public void setRunningCount(Integer runningCount) {
         this.runningCount = runningCount;
     }
 
-    public int getSucCount() {
+    public Integer getSucCount() {
         return sucCount;
     }
 
-    public void setSucCount(int sucCount) {
+    public void setSucCount(Integer sucCount) {
         this.sucCount = sucCount;
     }
 
-    public int getFailCount() {
+    public Integer getFailCount() {
         return failCount;
     }
 
-    public void setFailCount(int failCount) {
+    public void setFailCount(Integer failCount) {
         this.failCount = failCount;
     }
 }

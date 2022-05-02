@@ -71,7 +71,7 @@ public class XxlJobServiceImpl implements XxlJobService {
         example.orderBy("id").desc();
         // page query
         PageInfo<XxlJobInfo> pageInfo = PageHelper.startPage((start / length + 1), length, true)
-                .doSelectPageInfo(() -> xxlJobGroupDao.selectByExample(example));
+                .doSelectPageInfo(() -> xxlJobInfoDao.selectByExample(example));
         List<XxlJobInfo> list = pageInfo.getList();
         long listCount = pageInfo.getTotal();
         // package result
@@ -173,6 +173,7 @@ public class XxlJobServiceImpl implements XxlJobService {
         jobInfo.setAddTime(new Date());
         jobInfo.setUpdateTime(new Date());
         jobInfo.setGlueUpdatetime(new Date());
+        jobInfo.setTriggerLastTime(0L);
         synchronized (this) {
             jobInfo.setId(xxlJobInfoDao.maxId() + 1);
         }
@@ -322,8 +323,8 @@ public class XxlJobServiceImpl implements XxlJobService {
             return ReturnT.SUCCESS;
         }
 
-        xxlJobInfoDao.delete(id);
-        xxlJobLogDao.delete(id);
+        xxlJobInfoDao.remove(id);
+        xxlJobLogDao.remove(id);
         xxlJobLogGlueDao.deleteByJobId(id);
         return ReturnT.SUCCESS;
     }
@@ -352,7 +353,7 @@ public class XxlJobServiceImpl implements XxlJobService {
         }
 
         xxlJobInfo.setTriggerStatus(1);
-        xxlJobInfo.setTriggerLastTime(0);
+        xxlJobInfo.setTriggerLastTime(0L);
         xxlJobInfo.setTriggerNextTime(nextTriggerTime);
 
         xxlJobInfo.setUpdateTime(new Date());
@@ -365,8 +366,8 @@ public class XxlJobServiceImpl implements XxlJobService {
         XxlJobInfo xxlJobInfo = xxlJobInfoDao.loadById(id);
 
         xxlJobInfo.setTriggerStatus(0);
-        xxlJobInfo.setTriggerLastTime(0);
-        xxlJobInfo.setTriggerNextTime(0);
+        xxlJobInfo.setTriggerLastTime(0L);
+        xxlJobInfo.setTriggerNextTime(0L);
 
         xxlJobInfo.setUpdateTime(new Date());
         xxlJobInfoDao.update(xxlJobInfo);

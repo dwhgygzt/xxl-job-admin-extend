@@ -27,11 +27,13 @@
 
 	<insert id="save" parameterType="com.xxl.job.admin.core.model.XxlJobUser" useGeneratedKeys="true" keyProperty="id" >
 		INSERT INTO xxl_job_user (
+		    id,
 			username,
 			password,
 			role,
 			permission
 		) VALUES (
+			#{id},
 			#{username},
 			#{password},
 			#{role},
@@ -50,7 +52,7 @@
 		WHERE id = #{id}
 	</update>
 
-	<delete id="delete" parameterType="java.lang.Integer">
+	<delete id="remove" parameterType="java.lang.Integer">
 		DELETE
 		FROM xxl_job_user
 		WHERE id = #{id}

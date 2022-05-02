@@ -67,7 +67,7 @@ public class UserController {
         }
         example.orderBy("id");
         PageInfo<XxlJobUser> pageInfo = PageHelper.startPage((start / length + 1), length, true)
-                .doSelectPageInfo(() -> xxlJobGroupDao.selectByExample(example));
+                .doSelectPageInfo(() -> xxlJobUserDao.selectByExample(example));
         // page query
         List<XxlJobUser> list = pageInfo.getList();
         long listCount = pageInfo.getTotal();
@@ -163,7 +163,7 @@ public class UserController {
             return new ReturnT<String>(ReturnT.FAIL.getCode(), I18nUtil.getString("user_update_loginuser_limit"));
         }
 
-        xxlJobUserDao.delete(id);
+        xxlJobUserDao.remove(id);
         return ReturnT.SUCCESS;
     }
 

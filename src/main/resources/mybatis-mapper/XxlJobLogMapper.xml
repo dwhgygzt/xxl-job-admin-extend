@@ -92,7 +92,7 @@
 		WHERE id= #{id}
 	</update>
 	
-	<delete id="delete" >
+	<delete id="remove" >
 		delete from xxl_job_log
 		WHERE job_id = #{jobId}
 	</delete>

@@ -14,7 +14,7 @@ public class XxlJobUser {
 
     @Id
     @Column(name = "id")
-    private int id;
+    private Integer id;
 
     @Column(name = "username")
     private String username;        // 账号
@@ -23,16 +23,16 @@ public class XxlJobUser {
     private String password;        // 密码
 
     @Column(name = "role")
-    private int role;                // 角色：0-普通用户、1-管理员
+    private Integer role;                // 角色：0-普通用户、1-管理员
 
     @Column(name = "permission")
     private String permission;    // 权限：执行器ID列表，多个逗号分割
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -52,11 +52,11 @@ public class XxlJobUser {
         this.password = password;
     }
 
-    public int getRole() {
+    public Integer getRole() {
         return role;
     }
 
-    public void setRole(int role) {
+    public void setRole(Integer role) {
         this.role = role;
     }
 

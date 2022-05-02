@@ -6,7 +6,7 @@ management:
     base-path: /actuator
 
 mybatis:
-  type-aliases-package: com.xxl.job.admin.core.model.**.dao
+  type-aliases-package: com.xxl.job.admin.dao
   mapper-locations: classpath:/mybatis-mapper/*Mapper.xml
 
 # 通用mapper配置 https://mapperhelper.github.io

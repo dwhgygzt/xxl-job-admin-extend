@@ -19,7 +19,7 @@ public class XxlJobRegistry {
 
     @Id
     @Column(name = "id")
-    private long id;
+    private Long id;
 
     @Column(name = "registry_group")
     private String registryGroup;
@@ -33,11 +33,11 @@ public class XxlJobRegistry {
     @Column(name = "update_time")
     private Date updateTime;
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

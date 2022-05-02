@@ -114,7 +114,7 @@ public class JobLogController {
         // page query
         Example example = new Example(XxlJobLog.class);
         Example.Criteria criteria = example.createCriteria();
-        if (jobGroup >= 0) {
+        if (jobGroup > 0) {
             criteria.andEqualTo("jobGroup", jobGroup);
         }
         if (jobId > 0) {

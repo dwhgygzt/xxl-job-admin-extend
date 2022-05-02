@@ -279,8 +279,8 @@ public class JobScheduleHelper {
             jobInfo.setTriggerNextTime(nextValidTime.getTime());
         } else {
             jobInfo.setTriggerStatus(0);
-            jobInfo.setTriggerLastTime(0);
-            jobInfo.setTriggerNextTime(0);
+            jobInfo.setTriggerLastTime(0L);
+            jobInfo.setTriggerNextTime(0L);
             logger.warn(">>>>>>>>>>> xxl-job, refreshNextValidTime fail for job: jobId={}, scheduleType={}, scheduleConf={}",
                     jobInfo.getId(), jobInfo.getScheduleType(), jobInfo.getScheduleConf());
         }
@@ -288,14 +288,10 @@ public class JobScheduleHelper {
 
     private void pushTimeRing(int ringSecond, int jobId) {
         // push async ring
-        List<Integer> ringItemData = ringData.get(ringSecond);
-        if (ringItemData == null) {
-            ringItemData = new ArrayList<Integer>();
-            ringData.put(ringSecond, ringItemData);
-        }
+        List<Integer> ringItemData = ringData.computeIfAbsent(ringSecond, k -> new ArrayList<Integer>());
         ringItemData.add(jobId);
 
-        logger.debug(">>>>>>>>>>> xxl-job, schedule push time-ring : " + ringSecond + " = " + Arrays.asList(ringItemData));
+        logger.debug(">>>>>>>>>>> xxl-job, schedule push time-ring : " + ringSecond + " = " + Collections.singletonList(ringItemData));
     }
 
     public void toStop() {

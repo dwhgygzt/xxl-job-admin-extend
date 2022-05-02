@@ -15,18 +15,20 @@ public class XxlJobLog {
 
     public XxlJobLog() {
         this.id = SnowflakeConfig.nextId();
+        this.triggerCode = 0;
+        this.handleCode = 0;
     }
 
     @Id
     @Column(name = "id")
-    private long id;
+    private Long id;
 
     // job info
     @Column(name = "job_group")
-    private int jobGroup;
+    private Integer jobGroup;
 
     @Column(name = "job_id")
-    private int jobId;
+    private Integer jobId;
 
     // execute info
     @Column(name = "executor_address")
@@ -42,14 +44,14 @@ public class XxlJobLog {
     private String executorShardingParam;
 
     @Column(name = "executor_fail_retry_count")
-    private int executorFailRetryCount;
+    private Integer executorFailRetryCount;
 
     // trigger info
     @Column(name = "trigger_time")
     private Date triggerTime;
 
     @Column(name = "trigger_code")
-    private int triggerCode;
+    private Integer triggerCode;
 
     @Column(name = "trigger_msg")
     private String triggerMsg;
@@ -59,36 +61,37 @@ public class XxlJobLog {
     private Date handleTime;
 
     @Column(name = "handle_code")
-    private int handleCode;
+    private Integer handleCode;
 
     @Column(name = "handle_msg")
     private String handleMsg;
 
     // alarm info
     @Column(name = "alarm_status")
-    private int alarmStatus;
+    private Integer alarmStatus;
 
-    public long getId() {
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public int getJobGroup() {
+    public Integer getJobGroup() {
         return jobGroup;
     }
 
-    public void setJobGroup(int jobGroup) {
+    public void setJobGroup(Integer jobGroup) {
         this.jobGroup = jobGroup;
     }
 
-    public int getJobId() {
+    public Integer getJobId() {
         return jobId;
     }
 
-    public void setJobId(int jobId) {
+    public void setJobId(Integer jobId) {
         this.jobId = jobId;
     }
 
@@ -124,12 +127,20 @@ public class XxlJobLog {
         this.executorShardingParam = executorShardingParam;
     }
 
-    public int getExecutorFailRetryCount() {
+    public Integer getExecutorFailRetryCount() {
         return executorFailRetryCount;
     }
 
-    public void setExecutorFailRetryCount(int executorFailRetryCount) {
+    public void setExecutorFailRetryCount(Integer executorFailRetryCount) {
         this.executorFailRetryCount = executorFailRetryCount;
+    }
+
+    public Integer getAlarmStatus() {
+        return alarmStatus;
+    }
+
+    public void setAlarmStatus(Integer alarmStatus) {
+        this.alarmStatus = alarmStatus;
     }
 
     public Date getTriggerTime() {
@@ -140,11 +151,11 @@ public class XxlJobLog {
         this.triggerTime = triggerTime;
     }
 
-    public int getTriggerCode() {
+    public Integer getTriggerCode() {
         return triggerCode;
     }
 
-    public void setTriggerCode(int triggerCode) {
+    public void setTriggerCode(Integer triggerCode) {
         this.triggerCode = triggerCode;
     }
 
@@ -164,11 +175,11 @@ public class XxlJobLog {
         this.handleTime = handleTime;
     }
 
-    public int getHandleCode() {
+    public Integer getHandleCode() {
         return handleCode;
     }
 
-    public void setHandleCode(int handleCode) {
+    public void setHandleCode(Integer handleCode) {
         this.handleCode = handleCode;
     }
 
@@ -178,14 +189,6 @@ public class XxlJobLog {
 
     public void setHandleMsg(String handleMsg) {
         this.handleMsg = handleMsg;
-    }
-
-    public int getAlarmStatus() {
-        return alarmStatus;
-    }
-
-    public void setAlarmStatus(int alarmStatus) {
-        this.alarmStatus = alarmStatus;
     }
 
 }

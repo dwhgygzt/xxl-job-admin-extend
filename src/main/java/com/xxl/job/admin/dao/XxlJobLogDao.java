@@ -23,7 +23,7 @@ public interface XxlJobLogDao extends MyBaseMapper<XxlJobLog> {
 
     int updateHandleInfo(XxlJobLog xxlJobLog);
 
-    int delete(@Param("jobId") int jobId);
+    int remove(@Param("jobId") int jobId);
 
     Map<String, Object> findLogReport(@Param("from") Date from,
                                       @Param("to") Date to);

@@ -19,10 +19,10 @@ public class XxlJobLogGlue {
 
     @Id
     @Column(name = "id")
-    private long id;
+    private Long id;
 
     @Column(name = "job_id")
-    private int jobId;                // 任务主键ID
+    private Integer jobId;                // 任务主键ID
 
     @Column(name = "glue_type")
     private String glueType;        // GLUE类型	#com.xxl.job.core.glue.GlueTypeEnum
@@ -39,19 +39,20 @@ public class XxlJobLogGlue {
     @Column(name = "update_time")
     private Date updateTime;
 
-    public long getId() {
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public int getJobId() {
+    public Integer getJobId() {
         return jobId;
     }
 
-    public void setJobId(int jobId) {
+    public void setJobId(Integer jobId) {
         this.jobId = jobId;
     }
 
@@ -94,5 +95,4 @@ public class XxlJobLogGlue {
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
     }
-
 }

@@ -17,7 +17,7 @@ public class XxlJobGroup {
 
     @Id
     @Column(name = "id")
-    private int id;
+    private Integer id;
 
     @Column(name = "app_name")
     private String appname;
@@ -27,7 +27,7 @@ public class XxlJobGroup {
 
     // 执行器地址类型：0=自动注册、1=手动录入
     @Column(name = "address_type")
-    private int addressType;
+    private Integer addressType;
 
     // 执行器地址列表，多地址逗号分隔(手动录入)
     @Column(name = "address_list")
@@ -47,11 +47,11 @@ public class XxlJobGroup {
         return registryList;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -71,16 +71,20 @@ public class XxlJobGroup {
         this.title = title;
     }
 
-    public int getAddressType() {
+    public Integer getAddressType() {
         return addressType;
     }
 
-    public void setAddressType(int addressType) {
+    public void setAddressType(Integer addressType) {
         this.addressType = addressType;
     }
 
     public String getAddressList() {
         return addressList;
+    }
+
+    public void setAddressList(String addressList) {
+        this.addressList = addressList;
     }
 
     public Date getUpdateTime() {
@@ -91,8 +95,7 @@ public class XxlJobGroup {
         this.updateTime = updateTime;
     }
 
-    public void setAddressList(String addressList) {
-        this.addressList = addressList;
+    public void setRegistryList(List<String> registryList) {
+        this.registryList = registryList;
     }
-
 }

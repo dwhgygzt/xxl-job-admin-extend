@@ -15,7 +15,7 @@ public interface XxlJobUserDao extends MyBaseMapper<XxlJobUser> {
 
     int update(XxlJobUser xxlJobUser);
 
-    int delete(@Param("id") int id);
+    int remove(@Param("id") int id);
 
     int maxId();
 
