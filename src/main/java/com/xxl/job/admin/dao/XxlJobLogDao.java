@@ -28,15 +28,7 @@ public interface XxlJobLogDao extends MyBaseMapper<XxlJobLog> {
     Map<String, Object> findLogReport(@Param("from") Date from,
                                       @Param("to") Date to);
 
-    List<Long> findClearLogIds(@Param("jobGroup") int jobGroup,
-                               @Param("jobId") int jobId,
-                               @Param("clearBeforeTime") Date clearBeforeTime,
-                               @Param("clearBeforeNum") int clearBeforeNum,
-                               @Param("pagesize") int pagesize);
-
     int clearLog(@Param("logIds") List<Long> logIds);
-
-    List<Long> findFailJobLogIds(@Param("pagesize") int pagesize);
 
     int updateAlarmStatus(@Param("logId") long logId,
                           @Param("oldAlarmStatus") int oldAlarmStatus,

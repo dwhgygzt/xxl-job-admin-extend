@@ -17,8 +17,6 @@ public interface XxlJobLogGlueDao extends MyBaseMapper<XxlJobLogGlue> {
 
     List<XxlJobLogGlue> findByJobId(@Param("jobId") int jobId);
 
-    int removeOld(@Param("jobId") int jobId, @Param("limit") int limit);
-
     int deleteByJobId(@Param("jobId") int jobId);
 
 }

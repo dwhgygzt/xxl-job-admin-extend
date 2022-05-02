@@ -1,9 +1,11 @@
 package com.xxl.job.admin.core.conf;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.xxl.job.admin.core.alarm.JobAlarmer;
 import com.xxl.job.admin.core.model.XxlJobInfo;
+import com.xxl.job.admin.core.model.XxlJobLog;
 import com.xxl.job.admin.core.properties.XxlJobProperties;
 import com.xxl.job.admin.core.scheduler.XxlJobScheduler;
 import com.xxl.job.admin.dao.*;
@@ -15,8 +17,11 @@ import tk.mybatis.mapper.entity.Example;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.sql.DataSource;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * xxl-job config
@@ -106,6 +111,73 @@ public class XxlJobAdminConfig implements InitializingBean, DisposableBean {
         PageInfo<XxlJobInfo> pageInfo = PageHelper.startPage(1, pagesize, false)
                 .doSelectPageInfo(() -> xxlJobInfoDao.selectByExample(example));
         return pageInfo.getList();
+    }
+
+    public List<Long> findFailJobLogIds(int pagesize) {
+        Example example = new Example(XxlJobLog.class);
+        Example.Criteria criteria = example.createCriteria();
+        example.selectProperties("id");
+        example.orderBy("id");
+        criteria.andEqualTo("alarmStatus", 0);
+        criteria.andCondition(" (trigger_code NOT IN (0, 200) AND handle_code != 0) AND  (handle_code != 200) ");
+        PageInfo<XxlJobLog> pageInfo = PageHelper.startPage(1, pagesize, false)
+                .doSelectPageInfo(() -> xxlJobLogDao.selectByExample(example));
+        List<XxlJobLog> logs = pageInfo.getList();
+        if (CollectionUtil.isEmpty(logs)) {
+            return new ArrayList<>(2);
+        } else {
+            return logs.stream().map(XxlJobLog::getId).collect(Collectors.toList());
+        }
+    }
+
+    public List<Long> findClearLogIds(
+            int jobGroup, int jobId, Date clearBeforeTime, int clearBeforeNum, int pagesize) {
+        Example example = new Example(XxlJobLog.class);
+        Example.Criteria criteria = example.createCriteria();
+        Long limitId = null;
+        example.selectProperties("id");
+        if (jobGroup > 0) {
+            criteria.andEqualTo("jobGroup", jobGroup);
+        }
+        if (jobId > 0) {
+            criteria.andEqualTo("jobId", jobId);
+        }
+        if (clearBeforeNum > 0) {
+            example.orderBy("id").desc();
+            // 保留前 clearBeforeNum 条的数据
+            PageInfo<XxlJobLog> pageInfo = PageHelper.startPage((clearBeforeNum / pagesize) + 1, 1, false)
+                    .doSelectPageInfo(() -> xxlJobLogDao.selectByExample(example));
+            List<XxlJobLog> logs = pageInfo.getList();
+            if (CollectionUtil.isEmpty(logs)) {
+                return new ArrayList<>(2);
+            }
+            limitId = logs.get(0).getId();
+        }
+
+        Example example2 = new Example(XxlJobLog.class);
+        Example.Criteria criteria2 = example2.createCriteria();
+        example2.selectProperties("id");
+        example2.orderBy("id");
+        if (clearBeforeTime != null) {
+            criteria2.andLessThanOrEqualTo("triggerTime", clearBeforeTime);
+        }
+        if (jobGroup > 0) {
+            criteria2.andEqualTo("jobGroup", jobGroup);
+        }
+        if (jobId > 0) {
+            criteria2.andEqualTo("jobId", jobId);
+        }
+        if (limitId != null) {
+            criteria2.andLessThanOrEqualTo("id", limitId);
+        }
+        PageInfo<XxlJobLog> pageInfo2 = PageHelper.startPage(1, pagesize, false)
+                .doSelectPageInfo(() -> xxlJobLogDao.selectByExample(example2));
+        List<XxlJobLog> logs = pageInfo2.getList();
+        if (CollectionUtil.isEmpty(logs)) {
+            return new ArrayList<>(2);
+        } else {
+            return pageInfo2.getList().stream().map(XxlJobLog::getId).collect(Collectors.toList());
+        }
     }
 
 

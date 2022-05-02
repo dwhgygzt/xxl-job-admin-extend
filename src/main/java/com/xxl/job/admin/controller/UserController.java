@@ -1,5 +1,8 @@
 package com.xxl.job.admin.controller;
 
+import cn.hutool.core.util.StrUtil;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.xxl.job.admin.controller.annotation.PermissionLimit;
 import com.xxl.job.admin.core.model.XxlJobGroup;
 import com.xxl.job.admin.core.model.XxlJobUser;
@@ -15,6 +18,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -53,8 +57,20 @@ public class UserController {
                                         String username, int role) {
 
         // page list
-        List<XxlJobUser> list = xxlJobUserDao.pageList(start, length, username, role);
-        int list_count = xxlJobUserDao.pageListCount(start, length, username, role);
+        Example example = new Example(XxlJobUser.class);
+        Example.Criteria criteria = example.createCriteria();
+        if (StrUtil.isNotBlank(username)) {
+            criteria.andLike("username", String.format("%%%s%%", username));
+        }
+        if (role > -1) {
+            criteria.andEqualTo("role", role);
+        }
+        example.orderBy("id");
+        PageInfo<XxlJobUser> pageInfo = PageHelper.startPage((start / length + 1), length, true)
+                .doSelectPageInfo(() -> xxlJobGroupDao.selectByExample(example));
+        // page query
+        List<XxlJobUser> list = pageInfo.getList();
+        long listCount = pageInfo.getTotal();
 
         // filter
         if (list != null && list.size() > 0) {
@@ -62,11 +78,10 @@ public class UserController {
                 item.setPassword(null);
             }
         }
-
         // package result
         Map<String, Object> maps = new HashMap<String, Object>();
-        maps.put("recordsTotal", list_count);        // 总记录数
-        maps.put("recordsFiltered", list_count);    // 过滤后的总记录数
+        maps.put("recordsTotal", listCount);        // 总记录数
+        maps.put("recordsFiltered", listCount);    // 过滤后的总记录数
         maps.put("data", list);                    // 分页列表
         return maps;
     }
@@ -101,6 +116,9 @@ public class UserController {
             return new ReturnT<String>(ReturnT.FAIL_CODE, I18nUtil.getString("user_username_repeat"));
         }
 
+        synchronized (this) {
+            xxlJobUser.setId(xxlJobUserDao.maxId() + 1);
+        }
         // write
         xxlJobUserDao.save(xxlJobUser);
         return ReturnT.SUCCESS;

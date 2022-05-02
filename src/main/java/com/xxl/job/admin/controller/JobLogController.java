@@ -3,6 +3,7 @@ package com.xxl.job.admin.controller;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.xxl.job.admin.core.complete.XxlJobCompleter;
+import com.xxl.job.admin.core.conf.XxlJobAdminConfig;
 import com.xxl.job.admin.core.exception.XxlJobException;
 import com.xxl.job.admin.core.model.XxlJobGroup;
 import com.xxl.job.admin.core.model.XxlJobInfo;
@@ -250,12 +251,13 @@ public class JobLogController {
         } else if (type == 9) {
             clearBeforeNum = 0;            // 清理所有日志数据
         } else {
-            return new ReturnT<String>(ReturnT.FAIL_CODE, I18nUtil.getString("joblog_clean_type_unvalid"));
+            return new ReturnT<>(ReturnT.FAIL_CODE, I18nUtil.getString("joblog_clean_type_unvalid"));
         }
 
         List<Long> logIds;
         do {
-            logIds = xxlJobLogDao.findClearLogIds(jobGroup, jobId, clearBeforeTime, clearBeforeNum, 1000);
+            logIds = XxlJobAdminConfig.getAdminConfig()
+                    .findClearLogIds(jobGroup, jobId, clearBeforeTime, clearBeforeNum, 1000);
             if (logIds != null && logIds.size() > 0) {
                 xxlJobLogDao.clearLog(logIds);
             }

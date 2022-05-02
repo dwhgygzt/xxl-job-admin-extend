@@ -19,34 +19,6 @@
 		t.permission
 	</sql>
 
-	<select id="pageList" parameterType="java.util.HashMap" resultMap="XxlJobUser">
-		SELECT <include refid="Base_Column_List" />
-		FROM xxl_job_user AS t
-		<trim prefix="WHERE" prefixOverrides="AND | OR" >
-			<if test="username != null and username != ''">
-				AND t.username like CONCAT(CONCAT('%', #{username}), '%')
-			</if>
-			<if test="role gt -1">
-				AND t.role = #{role}
-			</if>
-		</trim>
-		ORDER BY username ASC
-		LIMIT #{offset}, #{pagesize}
-	</select>
-
-	<select id="pageListCount" parameterType="java.util.HashMap" resultType="int">
-		SELECT count(1)
-		FROM xxl_job_user AS t
-		<trim prefix="WHERE" prefixOverrides="AND | OR" >
-			<if test="username != null and username != ''">
-				AND t.username like CONCAT(CONCAT('%', #{username}), '%')
-			</if>
-			<if test="role gt -1">
-				AND t.role = #{role}
-			</if>
-		</trim>
-	</select>
-
 	<select id="loadByUserName" parameterType="java.util.HashMap" resultMap="XxlJobUser">
 		SELECT <include refid="Base_Column_List" />
 		FROM xxl_job_user AS t
@@ -83,5 +55,10 @@
 		FROM xxl_job_user
 		WHERE id = #{id}
 	</delete>
+
+	<select id="maxId" resultType="java.lang.Integer">
+		SELECT MAX(id) AS MAX_ID FROM xxl_job_user
+	</select>
+
 
 </mapper>

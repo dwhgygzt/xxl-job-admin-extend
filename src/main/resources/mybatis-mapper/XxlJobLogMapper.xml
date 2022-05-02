@@ -53,12 +53,14 @@
 	
 	<insert id="save" parameterType="com.xxl.job.admin.core.model.XxlJobLog" useGeneratedKeys="true" keyProperty="id" >
 		INSERT INTO xxl_job_log (
+		    id,
 			job_group,
 			job_id,
 			trigger_time,
 			trigger_code,
 			handle_code
 		) VALUES (
+		    #{id},
 			#{jobGroup},
 			#{jobId},
 			#{triggerTime},
@@ -104,40 +106,6 @@
 		WHERE trigger_time BETWEEN #{from} and #{to}
     </select>
 
-	<select id="findClearLogIds" resultType="long" >
-		SELECT id FROM xxl_job_log
-		<trim prefix="WHERE" prefixOverrides="AND | OR" >
-			<if test="jobGroup gt 0">
-				AND job_group = #{jobGroup}
-			</if>
-			<if test="jobId gt 0">
-				AND job_id = #{jobId}
-			</if>
-			<if test="clearBeforeTime != null">
-				AND trigger_time <![CDATA[ <= ]]> #{clearBeforeTime}
-			</if>
-			<if test="clearBeforeNum gt 0">
-				AND id NOT in(
-				SELECT id FROM(
-				SELECT id FROM xxl_job_log AS t
-				<trim prefix="WHERE" prefixOverrides="AND | OR" >
-					<if test="jobGroup gt 0">
-						AND t.job_group = #{jobGroup}
-					</if>
-					<if test="jobId gt 0">
-						AND t.job_id = #{jobId}
-					</if>
-				</trim>
-				ORDER BY t.trigger_time desc
-				LIMIT 0, #{clearBeforeNum}
-				) t1
-				)
-			</if>
-		</trim>
-		order by id asc
-		LIMIT #{pagesize}
-	</select>
-
 	<delete id="clearLog" >
 		delete from xxl_job_log
 		WHERE id in
@@ -145,18 +113,6 @@
 			#{item}
 		</foreach>
 	</delete>
-
-	<select id="findFailJobLogIds" resultType="long" >
-		SELECT id FROM xxl_job_log
-		WHERE !(
-			(trigger_code in (0, 200) and handle_code = 0)
-			OR
-			(handle_code = 200)
-		)
-		AND alarm_status = 0
-		ORDER BY id ASC
-		LIMIT #{pagesize}
-	</select>
 
 	<update id="updateAlarmStatus" >
 		UPDATE xxl_job_log

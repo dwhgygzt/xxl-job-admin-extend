@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -89,8 +90,19 @@ public class JobCodeController {
         xxlJobLogGlueDao.save(xxlJobLogGlue);
 
         // remove code backup more than 30
-        xxlJobLogGlueDao.removeOld(existsJobInfo.getId(), 30);
+        Example example = new Example(XxlJobLogGlue.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("jobId", existsJobInfo.getId());
+        example.orderBy("id").desc();
 
+        List<XxlJobLogGlue> glues = xxlJobLogGlueDao.selectByExample(example);
+        if (glues != null && glues.size() > 30) {
+            Example example2 = new Example(XxlJobLogGlue.class);
+            Example.Criteria criteria2 = example2.createCriteria();
+            criteria2.andEqualTo("jobId", existsJobInfo.getId());
+            criteria2.andLessThanOrEqualTo("id", glues.get(30).getId());
+            xxlJobLogGlueDao.deleteByExample(example2);
+        }
         return ReturnT.SUCCESS;
     }
 
