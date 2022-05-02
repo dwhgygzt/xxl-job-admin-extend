@@ -21,10 +21,10 @@ spring:
       minimum-idle: 10
       pool-name: HikariCP
       validation-timeout: 1000
-    password: root123
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:mysql://localhost:3306/xxl-job-admin?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://localhost:3309/xxl_job_2.3?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai
     username: root
+    password: root123
   freemarker:
     charset: UTF-8
     request-context-attribute: request
@@ -46,9 +46,9 @@ mailsend:
     javamail:
       host: smtp.exmail.qq.com
       port: 465
-      user: chandao@middol.com
-      pass: Pcn37qK9v4U6!r
-      form: 系统信息<chandao@middol.com>
+      user: xxx@guzt.cn
+      pass: 123456
+      form: 系统信息<xxx@guzt.cn>
       ssl-enable: true
 
 xxl:
