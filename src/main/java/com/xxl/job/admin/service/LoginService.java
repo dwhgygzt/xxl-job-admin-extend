@@ -8,6 +8,7 @@ import com.xxl.job.admin.dao.XxlJobUserDao;
 import com.xxl.job.core.biz.model.ReturnT;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.DigestUtils;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -51,7 +52,10 @@ public class LoginService {
         }
 
         // valid passowrd
-        XxlJobUser xxlJobUser = xxlJobUserDao.loadByUserName(username);
+        Example userExample = new Example(XxlJobUser.class);
+        userExample.createCriteria().andEqualTo("username", username);
+        XxlJobUser xxlJobUser = xxlJobUserDao.selectOneByExample(userExample);
+
         if (xxlJobUser == null) {
             return new ReturnT<>(500, I18nUtil.getString("login_param_unvalid"));
         }
@@ -94,7 +98,9 @@ public class LoginService {
                 logout(request, response);
             }
             if (cookieUser != null) {
-                XxlJobUser dbUser = xxlJobUserDao.loadByUserName(cookieUser.getUsername());
+                Example userExample = new Example(XxlJobUser.class);
+                userExample.createCriteria().andEqualTo("username", cookieUser.getUsername());
+                XxlJobUser dbUser = xxlJobUserDao.selectOneByExample(userExample);
                 if (dbUser != null) {
                     if (cookieUser.getPassword().equals(dbUser.getPassword())) {
                         return dbUser;

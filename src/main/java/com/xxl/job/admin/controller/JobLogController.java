@@ -56,8 +56,9 @@ public class JobLogController {
     public String index(HttpServletRequest request, Model model, @RequestParam(required = false, defaultValue = "0") Integer jobId) {
 
         // 执行器列表
-        List<XxlJobGroup> jobGroupListAll = xxlJobGroupDao.findAll();
-
+        Example groupExample = new Example(XxlJobGroup.class);
+        groupExample.orderBy("appname").orderBy("title").orderBy("id");
+        List<XxlJobGroup> jobGroupListAll = xxlJobGroupDao.selectByExample(groupExample);
         // filter group
         List<XxlJobGroup> jobGroupList = JobInfoController.filterJobGroupByRole(request, jobGroupListAll);
         if (jobGroupList == null || jobGroupList.size() == 0) {
@@ -68,7 +69,7 @@ public class JobLogController {
 
         // 任务
         if (jobId > 0) {
-            XxlJobInfo jobInfo = xxlJobInfoDao.loadById(jobId);
+            XxlJobInfo jobInfo = xxlJobInfoDao.selectByPrimaryKey(jobId);
             if (jobInfo == null) {
                 throw new RuntimeException(I18nUtil.getString("jobinfo_field_id") + I18nUtil.getString("system_unvalid"));
             }
@@ -85,7 +86,9 @@ public class JobLogController {
     @RequestMapping("/getJobsByGroup")
     @ResponseBody
     public ReturnT<List<XxlJobInfo>> getJobsByGroup(int jobGroup) {
-        List<XxlJobInfo> list = xxlJobInfoDao.getJobsByGroup(jobGroup);
+        Example jobInfoExample = new Example(XxlJobInfo.class);
+        jobInfoExample.createCriteria().andEqualTo("jobGroup", jobGroup);
+        List<XxlJobInfo> list = xxlJobInfoDao.selectByExample(jobInfoExample);
         return new ReturnT<>(list);
     }
 
@@ -156,7 +159,7 @@ public class JobLogController {
     public String logDetailPage(String id, Model model) {
 
         // base check
-        XxlJobLog jobLog = xxlJobLogDao.load(Long.parseLong(id));
+        XxlJobLog jobLog = xxlJobLogDao.selectByPrimaryKey(Long.parseLong(id));
         if (jobLog == null) {
             throw new RuntimeException(I18nUtil.getString("joblog_logid_unvalid"));
         }
@@ -178,7 +181,7 @@ public class JobLogController {
 
             // is end
             if (logResult.getContent() != null && logResult.getContent().getFromLineNum() > logResult.getContent().getToLineNum()) {
-                XxlJobLog jobLog = xxlJobLogDao.load(logId);
+                XxlJobLog jobLog = xxlJobLogDao.selectByPrimaryKey(logId);
                 if (jobLog.getHandleCode() > 0) {
                     logResult.getContent().setEnd(true);
                 }
@@ -195,8 +198,8 @@ public class JobLogController {
     @ResponseBody
     public ReturnT<String> logKill(int id) {
         // base check
-        XxlJobLog log = xxlJobLogDao.load(id);
-        XxlJobInfo jobInfo = xxlJobInfoDao.loadById(log.getJobId());
+        XxlJobLog log = xxlJobLogDao.selectByPrimaryKey(id);
+        XxlJobInfo jobInfo = xxlJobInfoDao.selectByPrimaryKey(log.getJobId());
         if (jobInfo == null) {
             return new ReturnT<>(500, I18nUtil.getString("jobinfo_glue_jobid_unvalid"));
         }

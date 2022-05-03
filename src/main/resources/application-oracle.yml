@@ -1,0 +1,34 @@
+# 通用mapper配置 https://mapperhelper.github.io
+mapper:
+  mappers:
+    - com.xxl.job.admin.core.mapper.MyBaseMapper
+  not-empty: false
+  identity: ORACLE
+
+pagehelper:
+  helperDialect: oracle
+  reasonable: true  #分页合理化参数，默认值为false。当该参数设置为 true 时，pageNum<=0 时会查询第一页， pageNum>pages（超过总数时），会查询最后一页。默认false 时，直接根据参数进行查询。
+  supportMethodsArguments: false #支持通过 Mapper 接口参数来传递分页参数，默认值 false，分页插件会从查询方法的参数值中，自动根据上面 params 配置的字段中取值，查找到合适的值时就会自动分页
+  params: count=countSql
+
+spring:
+  datasource:
+    druid:
+      name: xxljob23
+      url: jdbc:oracle:thin:@localhost:1521:XE
+      username: middol
+      password: middol123
+      driver-class-name: oracle.jdbc.OracleDriver
+      filters: stat
+      maxActive: 150
+      initialSize: 10
+      maxWait: 60000
+      minIdle: 10
+      timeBetweenEvictionRunsMillis: 60000
+      minEvictableIdleTimeMillis: 300000
+      validationQuery: select 'x' from dual
+      testWhileIdle: true
+      testOnBorrow: false
+      testOnReturn: false
+      poolPreparedStatements: true
+      maxOpenPreparedStatements: 20

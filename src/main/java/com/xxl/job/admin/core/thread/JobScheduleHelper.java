@@ -141,7 +141,8 @@ public class JobScheduleHelper {
 
                         // 3、update trigger info
                         for (XxlJobInfo jobInfo : scheduleList) {
-                            XxlJobAdminConfig.getAdminConfig().getXxlJobInfoDao().scheduleUpdate(jobInfo);
+                            XxlJobAdminConfig.getAdminConfig().getXxlJobInfoDao()
+                                    .updateByPrimaryKeySelective(jobInfo);
                         }
 
                     } else {

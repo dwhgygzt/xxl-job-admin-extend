@@ -120,7 +120,7 @@ public class JobGroupController {
             xxlJobGroup.setId(xxlJobGroupDao.maxId() + 1);
         }
 
-        int ret = xxlJobGroupDao.save(xxlJobGroup);
+        int ret = xxlJobGroupDao.insertSelective(xxlJobGroup);
         return (ret > 0) ? ReturnT.SUCCESS : ReturnT.FAIL;
     }
 
@@ -167,7 +167,7 @@ public class JobGroupController {
         // process
         xxlJobGroup.setUpdateTime(new Date());
 
-        int ret = xxlJobGroupDao.update(xxlJobGroup);
+        int ret = xxlJobGroupDao.updateByPrimaryKeySelective(xxlJobGroup);
         return (ret > 0) ? ReturnT.SUCCESS : ReturnT.FAIL;
     }
 
@@ -207,20 +207,21 @@ public class JobGroupController {
         if (count > 0) {
             return new ReturnT<>(500, I18nUtil.getString("jobgroup_del_limit_0"));
         }
-
-        List<XxlJobGroup> allList = xxlJobGroupDao.findAll();
+        Example groupExample = new Example(XxlJobGroup.class);
+        groupExample.orderBy("appname").orderBy("title").orderBy("id");
+        List<XxlJobGroup> allList = xxlJobGroupDao.selectByExample(groupExample);
         if (allList.size() == 1) {
             return new ReturnT<>(500, I18nUtil.getString("jobgroup_del_limit_1"));
         }
 
-        int ret = xxlJobGroupDao.remove(id);
+        int ret = xxlJobGroupDao.deleteByPrimaryKey(id);
         return (ret > 0) ? ReturnT.SUCCESS : ReturnT.FAIL;
     }
 
     @RequestMapping("/loadById")
     @ResponseBody
     public ReturnT<XxlJobGroup> loadById(int id) {
-        XxlJobGroup jobGroup = xxlJobGroupDao.load(id);
+        XxlJobGroup jobGroup = xxlJobGroupDao.selectByPrimaryKey(id);
         return jobGroup != null ? new ReturnT<>(jobGroup) : new ReturnT<>(ReturnT.FAIL_CODE, null);
     }
 

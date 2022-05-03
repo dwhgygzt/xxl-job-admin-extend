@@ -25,6 +25,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -61,7 +62,9 @@ public class JobInfoController {
         model.addAttribute("MisfireStrategyEnum", MisfireStrategyEnum.values());
 
         // 执行器列表
-        List<XxlJobGroup> jobGroupListAll = xxlJobGroupDao.findAll();
+        Example groupExample = new Example(XxlJobGroup.class);
+        groupExample.orderBy("appname").orderBy("title").orderBy("id");
+        List<XxlJobGroup> jobGroupListAll = xxlJobGroupDao.selectByExample(groupExample);
 
         // filter group
         List<XxlJobGroup> jobGroupList = filterJobGroupByRole(request, jobGroupListAll);

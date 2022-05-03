@@ -33,7 +33,7 @@ public class XxlJobCompleter {
         }
 
         // fresh handle
-        XxlJobAdminConfig.getAdminConfig().getXxlJobLogDao().updateHandleInfo(xxlJobLog);
+        XxlJobAdminConfig.getAdminConfig().getXxlJobLogDao().updateByPrimaryKeySelective(xxlJobLog);
     }
 
 
@@ -45,7 +45,7 @@ public class XxlJobCompleter {
         // 1、handle success, to trigger child job
         StringBuilder triggerChildMsg = null;
         if (XxlJobContext.HANDLE_COCE_SUCCESS == xxlJobLog.getHandleCode()) {
-            XxlJobInfo xxlJobInfo = XxlJobAdminConfig.getAdminConfig().getXxlJobInfoDao().loadById(xxlJobLog.getJobId());
+            XxlJobInfo xxlJobInfo = XxlJobAdminConfig.getAdminConfig().getXxlJobInfoDao().selectByPrimaryKey(xxlJobLog.getJobId());
             if (xxlJobInfo != null && xxlJobInfo.getChildJobId() != null && xxlJobInfo.getChildJobId().trim().length() > 0) {
                 triggerChildMsg = new StringBuilder("<br><br><span style=\"color:#00c0ef;\" > >>>>>>>>>>>" + I18nUtil.getString("jobconf_trigger_child_run") + "<<<<<<<<<<< </span><br>");
 

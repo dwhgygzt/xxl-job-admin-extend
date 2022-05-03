@@ -25,12 +25,6 @@ public interface XxlJobRegistryDao extends MyBaseMapper<XxlJobRegistry> {
                        @Param("registryValue") String registryValue,
                        @Param("updateTime") Date updateTime);
 
-    int registrySave(@Param("id") Long id,
-                     @Param("registryGroup") String registryGroup,
-                     @Param("registryKey") String registryKey,
-                     @Param("registryValue") String registryValue,
-                     @Param("updateTime") Date updateTime);
-
     int registryDelete(@Param("registryGroup") String registryGroup,
                        @Param("registryKey") String registryKey,
                        @Param("registryValue") String registryValue);

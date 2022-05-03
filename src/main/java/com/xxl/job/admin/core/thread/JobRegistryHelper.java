@@ -11,6 +11,7 @@ import com.xxl.job.core.enums.RegistryConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -53,7 +54,12 @@ public class JobRegistryHelper {
             while (!toStop) {
                 try {
                     // auto registry group
-                    List<XxlJobGroup> groupList = XxlJobAdminConfig.getAdminConfig().getXxlJobGroupDao().findByAddressType(0);
+                    Example groupExample = new Example(XxlJobGroup.class);
+                    groupExample.orderBy("appname").orderBy("title").orderBy("id");
+                    groupExample.createCriteria().andEqualTo("addressType", 0);
+                    List<XxlJobGroup> groupList = XxlJobAdminConfig.getAdminConfig()
+                            .getXxlJobGroupDao().selectByExample(groupExample);
+
                     if (groupList != null && !groupList.isEmpty()) {
 
                         // remove dead address (admin/executor)
@@ -102,7 +108,7 @@ public class JobRegistryHelper {
                             group.setAddressList(addressListStr);
                             group.setUpdateTime(new Date());
 
-                            XxlJobAdminConfig.getAdminConfig().getXxlJobGroupDao().update(group);
+                            XxlJobAdminConfig.getAdminConfig().getXxlJobGroupDao().updateByPrimaryKeySelective(group);
                         }
                     }
                 } catch (Exception e) {
@@ -157,12 +163,13 @@ public class JobRegistryHelper {
             int ret = XxlJobAdminConfig.getAdminConfig().getXxlJobRegistryDao().registryUpdate(
                     registryParam.getRegistryGroup(), registryParam.getRegistryKey(), registryParam.getRegistryValue(), new Date());
             if (ret < 1) {
-                XxlJobAdminConfig.getAdminConfig().getXxlJobRegistryDao().registrySave(
-                        SnowflakeConfig.nextId(),
-                        registryParam.getRegistryGroup(),
-                        registryParam.getRegistryKey(),
-                        registryParam.getRegistryValue(),
-                        new Date());
+                XxlJobRegistry registry = new XxlJobRegistry();
+                registry.setId(SnowflakeConfig.nextId());
+                registry.setRegistryGroup(registryParam.getRegistryGroup());
+                registry.setRegistryKey(registryParam.getRegistryKey());
+                registry.setRegistryValue(registryParam.getRegistryValue());
+                registry.setUpdateTime(new Date());
+                XxlJobAdminConfig.getAdminConfig().getXxlJobRegistryDao().insertSelective(registry);
 
                 // fresh
                 //freshGroupRegistryInfo(registryParam);

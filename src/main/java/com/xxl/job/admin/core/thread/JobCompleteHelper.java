@@ -140,7 +140,8 @@ public class JobCompleteHelper {
 
     private ReturnT<String> callback(HandleCallbackParam handleCallbackParam) {
         // valid log item
-        XxlJobLog log = XxlJobAdminConfig.getAdminConfig().getXxlJobLogDao().load(handleCallbackParam.getLogId());
+        XxlJobLog log = XxlJobAdminConfig.getAdminConfig().getXxlJobLogDao()
+                .selectByPrimaryKey(handleCallbackParam.getLogId());
         if (log == null) {
             return new ReturnT<>(ReturnT.FAIL_CODE, "log item not found.");
         }

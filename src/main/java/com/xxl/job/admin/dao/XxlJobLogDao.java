@@ -15,16 +15,6 @@ import java.util.Map;
  */
 public interface XxlJobLogDao extends MyBaseMapper<XxlJobLog> {
 
-    XxlJobLog load(@Param("id") long id);
-
-    long save(XxlJobLog xxlJobLog);
-
-    int updateTriggerInfo(XxlJobLog xxlJobLog);
-
-    int updateHandleInfo(XxlJobLog xxlJobLog);
-
-    int remove(@Param("jobId") int jobId);
-
     Map<String, Object> findLogReport(@Param("from") Date from,
                                       @Param("to") Date to);
 

@@ -18,6 +18,7 @@ public class XxlJobLog {
         this.triggerCode = 0;
         this.handleCode = 0;
         this.alarmStatus = 0;
+        this.executorFailRetryCount = 0;
     }
 
     @Id

@@ -1,61 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
-	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.xxl.job.admin.dao.XxlJobLogReportDao">
-	
-	<resultMap id="XxlJobLogReport" type="com.xxl.job.admin.core.model.XxlJobLogReport" >
-		<result column="id" property="id" />
-	    <result column="trigger_day" property="triggerDay" />
-		<result column="running_count" property="runningCount" />
-	    <result column="suc_count" property="sucCount" />
-	    <result column="fail_count" property="failCount" />
-	</resultMap>
 
-	<sql id="Base_Column_List">
-		t.id,
-		t.trigger_day,
-		t.running_count,
-		t.suc_count,
-		t.fail_count
-	</sql>
-	
-	<insert id="save" parameterType="com.xxl.job.admin.core.model.XxlJobLogReport"  >
-		INSERT INTO xxl_job_log_report (
-		    id,
-			trigger_day,
-			running_count,
-			suc_count,
-			fail_count
-		) VALUES (
-			#{id},
-			#{triggerDay},
-			#{runningCount},
-			#{sucCount},
-			#{failCount}
-		);
-	</insert>
+    <resultMap id="XxlJobLogReport" type="com.xxl.job.admin.core.model.XxlJobLogReport">
+        <result column="id" property="id" jdbcType="NUMERIC"/>
+        <result column="trigger_day" property="triggerDay" jdbcType="TIMESTAMP"/>
+        <result column="running_count" property="runningCount" jdbcType="INTEGER"/>
+        <result column="suc_count" property="sucCount" jdbcType="INTEGER"/>
+        <result column="fail_count" property="failCount" jdbcType="INTEGER"/>
+    </resultMap>
 
-	<update id="update" >
+    <update id="update">
         UPDATE xxl_job_log_report
-        SET running_count = #{runningCount},
-        	suc_count = #{sucCount},
-        	fail_count = #{failCount}
-        WHERE trigger_day = #{triggerDay}
+        SET running_count = #{runningCount,jdbcType=INTEGER},
+            suc_count     = #{sucCount,jdbcType=INTEGER},
+            fail_count    = #{failCount,jdbcType=INTEGER}
+        WHERE trigger_day = #{triggerDay,jdbcType=TIMESTAMP}
     </update>
 
-	<select id="queryLogReport" resultMap="XxlJobLogReport">
-		SELECT <include refid="Base_Column_List" />
-		FROM xxl_job_log_report AS t
-		WHERE t.trigger_day between #{triggerDayFrom} and #{triggerDayTo}
-		ORDER BY t.trigger_day ASC
-	</select>
-
-	<select id="queryLogReportTotal" resultMap="XxlJobLogReport">
-		SELECT
-			SUM(running_count) running_count,
-			SUM(suc_count) suc_count,
-			SUM(fail_count) fail_count
-		FROM xxl_job_log_report AS t
-	</select>
+    <select id="queryLogReportTotal" resultMap="XxlJobLogReport">
+        SELECT SUM(running_count) running_count,
+               SUM(suc_count)     suc_count,
+               SUM(fail_count)    fail_count
+        FROM xxl_job_log_report t
+    </select>
 
 </mapper>

@@ -34,8 +34,11 @@ public class JobCodeController {
 
     @RequestMapping
     public String index(HttpServletRequest request, Model model, int jobId) {
-        XxlJobInfo jobInfo = xxlJobInfoDao.loadById(jobId);
-        List<XxlJobLogGlue> jobLogGlues = xxlJobLogGlueDao.findByJobId(jobId);
+        XxlJobInfo jobInfo = xxlJobInfoDao.selectByPrimaryKey(jobId);
+
+        Example jobGlueExample = new Example(XxlJobLogGlue.class);
+        jobGlueExample.createCriteria().andEqualTo("jobId", jobId);
+        List<XxlJobLogGlue> jobLogGlues = xxlJobLogGlueDao.selectByExample(jobGlueExample);
 
         if (jobInfo == null) {
             throw new RuntimeException(I18nUtil.getString("jobinfo_glue_jobid_unvalid"));
@@ -65,7 +68,7 @@ public class JobCodeController {
         if (glueRemark.length() < 4 || glueRemark.length() > 100) {
             return new ReturnT<>(500, I18nUtil.getString("jobinfo_glue_remark_limit"));
         }
-        XxlJobInfo existsJobInfo = xxlJobInfoDao.loadById(id);
+        XxlJobInfo existsJobInfo = xxlJobInfoDao.selectByPrimaryKey(id);
         if (existsJobInfo == null) {
             return new ReturnT<>(500, I18nUtil.getString("jobinfo_glue_jobid_unvalid"));
         }
@@ -76,7 +79,7 @@ public class JobCodeController {
         existsJobInfo.setGlueUpdatetime(new Date());
 
         existsJobInfo.setUpdateTime(new Date());
-        xxlJobInfoDao.update(existsJobInfo);
+        xxlJobInfoDao.updateByPrimaryKeySelective(existsJobInfo);
 
         // log old code
         XxlJobLogGlue xxlJobLogGlue = new XxlJobLogGlue();
@@ -87,7 +90,7 @@ public class JobCodeController {
 
         xxlJobLogGlue.setAddTime(new Date());
         xxlJobLogGlue.setUpdateTime(new Date());
-        xxlJobLogGlueDao.save(xxlJobLogGlue);
+        xxlJobLogGlueDao.insertSelective(xxlJobLogGlue);
 
         // remove code backup more than 30
         Example example = new Example(XxlJobLogGlue.class);

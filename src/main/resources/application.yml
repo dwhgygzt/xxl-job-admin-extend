@@ -54,4 +54,4 @@ spring:
     resources:
       static-locations: classpath:/static/
   profiles:
-    active: sqlserver
+    active: oracle

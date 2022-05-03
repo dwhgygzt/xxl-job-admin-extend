@@ -43,7 +43,9 @@ public class UserController {
     public String index(Model model) {
 
         // 执行器列表
-        List<XxlJobGroup> groupList = xxlJobGroupDao.findAll();
+        Example groupExample = new Example(XxlJobGroup.class);
+        groupExample.orderBy("appname").orderBy("title").orderBy("id");
+        List<XxlJobGroup> groupList = xxlJobGroupDao.selectByExample(groupExample);
         model.addAttribute("groupList", groupList);
 
         return "user/user.index";
@@ -111,7 +113,9 @@ public class UserController {
         xxlJobUser.setPassword(DigestUtils.md5DigestAsHex(xxlJobUser.getPassword().getBytes()));
 
         // check repeat
-        XxlJobUser existUser = xxlJobUserDao.loadByUserName(xxlJobUser.getUsername());
+        Example userExample = new Example(XxlJobUser.class);
+        userExample.createCriteria().andEqualTo("username", xxlJobUser.getUsername());
+        XxlJobUser existUser = xxlJobUserDao.selectOneByExample(userExample);
         if (existUser != null) {
             return new ReturnT<>(ReturnT.FAIL_CODE, I18nUtil.getString("user_username_repeat"));
         }
@@ -120,7 +124,7 @@ public class UserController {
             xxlJobUser.setId(xxlJobUserDao.maxId() + 1);
         }
         // write
-        xxlJobUserDao.save(xxlJobUser);
+        xxlJobUserDao.insertSelective(xxlJobUser);
         return ReturnT.SUCCESS;
     }
 
@@ -149,7 +153,7 @@ public class UserController {
         }
 
         // write
-        xxlJobUserDao.update(xxlJobUser);
+        xxlJobUserDao.updateByPrimaryKeySelective(xxlJobUser);
         return ReturnT.SUCCESS;
     }
 
@@ -164,7 +168,7 @@ public class UserController {
             return new ReturnT<>(ReturnT.FAIL.getCode(), I18nUtil.getString("user_update_loginuser_limit"));
         }
 
-        xxlJobUserDao.remove(id);
+        xxlJobUserDao.deleteByPrimaryKey(id);
         return ReturnT.SUCCESS;
     }
 
@@ -188,9 +192,11 @@ public class UserController {
         XxlJobUser loginUser = (XxlJobUser) request.getAttribute(LoginService.LOGIN_IDENTITY_KEY);
 
         // do write
-        XxlJobUser existUser = xxlJobUserDao.loadByUserName(loginUser.getUsername());
+        Example userExample = new Example(XxlJobUser.class);
+        userExample.createCriteria().andEqualTo("username", loginUser.getUsername());
+        XxlJobUser existUser = xxlJobUserDao.selectOneByExample(userExample);
         existUser.setPassword(md5Password);
-        xxlJobUserDao.update(existUser);
+        xxlJobUserDao.updateByPrimaryKeySelective(existUser);
 
         return ReturnT.SUCCESS;
     }
