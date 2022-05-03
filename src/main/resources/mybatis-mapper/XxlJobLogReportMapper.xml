@@ -19,7 +19,7 @@
 		t.fail_count
 	</sql>
 	
-	<insert id="save" parameterType="com.xxl.job.admin.core.model.XxlJobLogReport" useGeneratedKeys="true" keyProperty="id" >
+	<insert id="save" parameterType="com.xxl.job.admin.core.model.XxlJobLogReport"  >
 		INSERT INTO xxl_job_log_report (
 		    id,
 			trigger_day,

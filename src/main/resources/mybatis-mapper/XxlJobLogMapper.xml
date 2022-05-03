@@ -51,7 +51,7 @@
 	</select>
 
 	
-	<insert id="save" parameterType="com.xxl.job.admin.core.model.XxlJobLog" useGeneratedKeys="true" keyProperty="id" >
+	<insert id="save" parameterType="com.xxl.job.admin.core.model.XxlJobLog"  >
 		INSERT INTO xxl_job_log (
 		    id,
 			job_group,

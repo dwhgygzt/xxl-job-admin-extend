@@ -17,6 +17,7 @@ public class XxlJobLog {
         this.id = SnowflakeConfig.nextId();
         this.triggerCode = 0;
         this.handleCode = 0;
+        this.alarmStatus = 0;
     }
 
     @Id

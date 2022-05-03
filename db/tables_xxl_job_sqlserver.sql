@@ -17,8 +17,9 @@ use [xxl_job_2.3];
 
 
 -- 创建表
--- Navicat Premium Data Transfer
-
+/*
+ Navicat Premium Data Transfer
+*/
 -- ----------------------------
 -- Table structure for xxl_job_group
 -- ----------------------------
@@ -30,7 +31,7 @@ CREATE TABLE [dbo].[xxl_job_group] (
     [id] int  NOT NULL,
     [app_name] nvarchar(64) COLLATE Chinese_PRC_CI_AS  NOT NULL,
     [title] nvarchar(12) COLLATE Chinese_PRC_CI_AS  NOT NULL,
-    [address_type] tinyint  NOT NULL,
+    [address_type] tinyint DEFAULT ((0)) NOT NULL,
     [address_list] nvarchar(max) COLLATE Chinese_PRC_CI_AS  NULL,
     [update_time] datetime2(7)  NULL
     )
@@ -71,7 +72,13 @@ ALTER TABLE [dbo].[xxl_job_group] SET (LOCK_ESCALATION = TABLE)
     -- ----------------------------
 -- Records of xxl_job_group
 -- ----------------------------
-    INSERT INTO [dbo].[xxl_job_group]  VALUES (N'1', N'xxl-job-executor-sample', N'示例执行器', N'0', NULL, N'2022-05-02 10:00:49.0000000')
+    INSERT INTO [dbo].[xxl_job_group]  VALUES (N'1', N'xxl-job-executor-sample', N'示例执行器', N'0', NULL, N'2022-05-03 17:02:39.1520000')
+    GO
+
+    INSERT INTO [dbo].[xxl_job_group]  VALUES (N'2', N'wms-main-api', N'WMS仓库管理系统', N'0', N'http://192.168.50.1:9806/', N'2022-05-03 17:02:39.1070000')
+    GO
+
+    INSERT INTO [dbo].[xxl_job_group]  VALUES (N'3', N'pay-api', N'支付中心2', N'0', NULL, N'2022-05-03 17:02:39.0620000')
     GO
 
 
@@ -90,23 +97,23 @@ CREATE TABLE [dbo].[xxl_job_info] (
     [update_time] datetime2(7)  NULL,
     [author] nvarchar(64) COLLATE Chinese_PRC_CI_AS  NULL,
     [alarm_email] nvarchar(255) COLLATE Chinese_PRC_CI_AS  NULL,
-    [schedule_type] nvarchar(50) COLLATE Chinese_PRC_CI_AS  NOT NULL,
+    [schedule_type] nvarchar(50) COLLATE Chinese_PRC_CI_AS DEFAULT ('NONE') NOT NULL,
     [schedule_conf] nvarchar(128) COLLATE Chinese_PRC_CI_AS  NULL,
-    [misfire_strategy] nvarchar(50) COLLATE Chinese_PRC_CI_AS  NOT NULL,
+    [misfire_strategy] nvarchar(50) COLLATE Chinese_PRC_CI_AS DEFAULT ('DO_NOTHING') NOT NULL,
     [executor_route_strategy] nvarchar(50) COLLATE Chinese_PRC_CI_AS  NULL,
     [executor_handler] nvarchar(255) COLLATE Chinese_PRC_CI_AS  NULL,
     [executor_param] nvarchar(512) COLLATE Chinese_PRC_CI_AS  NULL,
     [executor_block_strategy] nvarchar(50) COLLATE Chinese_PRC_CI_AS  NULL,
-    [executor_timeout] int  NOT NULL,
-    [executor_fail_retry_count] int  NOT NULL,
+    [executor_timeout] int DEFAULT ((0)) NOT NULL,
+    [executor_fail_retry_count] int DEFAULT ((0)) NOT NULL,
     [glue_type] nvarchar(50) COLLATE Chinese_PRC_CI_AS  NOT NULL,
     [glue_source] nvarchar(max) COLLATE Chinese_PRC_CI_AS  NULL,
     [glue_remark] nvarchar(128) COLLATE Chinese_PRC_CI_AS  NULL,
     [glue_updatetime] datetime2(7)  NULL,
     [child_jobid] nvarchar(255) COLLATE Chinese_PRC_CI_AS  NULL,
-    [trigger_status] tinyint  NOT NULL,
-    [trigger_last_time] bigint  NOT NULL,
-    [trigger_next_time] bigint  NOT NULL
+    [trigger_status] tinyint DEFAULT ((0)) NOT NULL,
+    [trigger_last_time] bigint DEFAULT ((0)) NOT NULL,
+    [trigger_next_time] bigint DEFAULT ((0)) NOT NULL
     )
     GO
 
@@ -260,6 +267,15 @@ ALTER TABLE [dbo].[xxl_job_info] SET (LOCK_ESCALATION = TABLE)
     INSERT INTO [dbo].[xxl_job_info]  VALUES (N'1', N'1', N'测试任务1', N'2018-11-03 22:21:31.0000000', N'2018-11-03 22:21:31.0000000', N'XXL', N'', N'CRON', N'0 0 0 * * ? *', N'DO_NOTHING', N'FIRST', N'demoJobHandler', N'', N'SERIAL_EXECUTION', N'0', N'0', N'BEAN', N'', N'GLUE代码初始化', N'2018-11-03 22:21:31.0000000', N'', N'0', N'0', N'0')
     GO
 
+    INSERT INTO [dbo].[xxl_job_info]  VALUES (N'2', N'2', N'定时检查库存', N'2022-05-02 19:23:02.0000000', N'2022-05-03 16:59:50.1010000', N'徐海峰', N'', N'FIX_RATE', N'5', N'DO_NOTHING', N'FAILOVER', N'checkStockJobHandler', N'8', N'DISCARD_LATER', N'0', N'0', N'BEAN', N'', N'GLUE代码初始化', N'2022-05-02 19:23:02.0000000', N'', N'0', N'0', N'0')
+    GO
+
+    INSERT INTO [dbo].[xxl_job_info]  VALUES (N'3', N'3', N'定时检查回调', N'2022-05-02 20:44:44.0000000', N'2022-05-02 20:44:44.0000000', N'刘星', N'', N'CRON', N'* 2 * * * ?', N'DO_NOTHING', N'FAILOVER', N'checkPayJobHandler', N'', N'SERIAL_EXECUTION', N'0', N'0', N'BEAN', N'', N'GLUE代码初始化', N'2022-05-02 20:44:44.0000000', N'', N'0', N'0', N'0')
+    GO
+
+    INSERT INTO [dbo].[xxl_job_info]  VALUES (N'4', N'2', N'发送指令给WCS系统', N'2022-05-03 16:08:29.0000000', N'2022-05-03 16:08:29.0000000', N'徐海峰', N'', N'FIX_RATE', N'5', N'DO_NOTHING', N'LEAST_FREQUENTLY_USED', N'sendWcsJobHandler', N'8', N'SERIAL_EXECUTION', N'0', N'0', N'BEAN', N'', N'GLUE代码初始化', N'2022-05-03 16:08:29.0000000', N'', N'0', N'0', N'0')
+    GO
+
 
     -- ----------------------------
 -- Table structure for xxl_job_lock
@@ -306,14 +322,14 @@ CREATE TABLE [dbo].[xxl_job_log] (
     [executor_handler] nvarchar(255) COLLATE Chinese_PRC_CI_AS  NULL,
     [executor_param] nvarchar(512) COLLATE Chinese_PRC_CI_AS  NULL,
     [executor_sharding_param] nvarchar(20) COLLATE Chinese_PRC_CI_AS  NULL,
-    [executor_fail_retry_count] int  NOT NULL,
+    [executor_fail_retry_count] int DEFAULT ((0)) NOT NULL,
     [trigger_time] datetime2(7)  NULL,
     [trigger_code] int  NOT NULL,
     [trigger_msg] nvarchar(max) COLLATE Chinese_PRC_CI_AS  NULL,
     [handle_time] datetime2(7)  NULL,
     [handle_code] int  NOT NULL,
     [handle_msg] nvarchar(max) COLLATE Chinese_PRC_CI_AS  NULL,
-    [alarm_status] tinyint  NOT NULL
+    [alarm_status] tinyint DEFAULT ((0)) NOT NULL
     )
     GO
 
@@ -422,7 +438,28 @@ ALTER TABLE [dbo].[xxl_job_log] SET (LOCK_ESCALATION = TABLE)
     -- ----------------------------
 -- Records of xxl_job_log
 -- ----------------------------
-    INSERT INTO [dbo].[xxl_job_log]  VALUES (N'1', N'1', N'1', NULL, N'demoJobHandler', N'abc', NULL, N'0', N'2022-05-02 09:59:45.0000000', N'500', N'任务触发类型：手动触发<br>调度机器：192.168.50.1<br>执行器-注册方式：自动注册<br>执行器-地址列表：null<br>路由策略：第一个<br>阻塞处理策略：单机串行<br>任务超时时间：0<br>失败重试次数：0<br><br><span style="color:#00c0ef;" > >>>>>>>>>>>触发调度<<<<<<<<<<< </span><br>调度失败：执行器地址为空<br><br>', NULL, N'0', NULL, N'1')
+    INSERT INTO [dbo].[xxl_job_log]  VALUES (N'1521414056723091456', N'2', N'2', N'http://192.168.50.1:9806/', N'checkStockJobHandler', N'8', NULL, N'0', N'2022-05-03 16:59:12.2860000', N'200', N'任务触发类型：Cron触发<br>调度机器：192.168.50.1<br>执行器-注册方式：自动注册<br>执行器-地址列表：[http://192.168.50.1:9806/]<br>路由策略：故障转移<br>阻塞处理策略：丢弃后续调度<br>任务超时时间：0<br>失败重试次数：0<br><br><span style="color:#00c0ef;" > >>>>>>>>>>>触发调度<<<<<<<<<<< </span><br>心跳检测：<br>address：http://192.168.50.1:9806/<br>code：200<br>msg：null<br><br>触发调度：<br>address：http://192.168.50.1:9806/<br>code：200<br>msg：null', N'2022-05-03 16:59:12.5890000', N'200', N'', N'0')
+    GO
+
+    INSERT INTO [dbo].[xxl_job_log]  VALUES (N'1521414077895938048', N'2', N'2', N'http://192.168.50.1:9806/', N'checkStockJobHandler', N'8', NULL, N'0', N'2022-05-03 16:59:17.3340000', N'200', N'任务触发类型：Cron触发<br>调度机器：192.168.50.1<br>执行器-注册方式：自动注册<br>执行器-地址列表：[http://192.168.50.1:9806/]<br>路由策略：故障转移<br>阻塞处理策略：丢弃后续调度<br>任务超时时间：0<br>失败重试次数：0<br><br><span style="color:#00c0ef;" > >>>>>>>>>>>触发调度<<<<<<<<<<< </span><br>心跳检测：<br>address：http://192.168.50.1:9806/<br>code：200<br>msg：null<br><br>触发调度：<br>address：http://192.168.50.1:9806/<br>code：200<br>msg：null', N'2022-05-03 16:59:17.7970000', N'200', N'', N'0')
+    GO
+
+    INSERT INTO [dbo].[xxl_job_log]  VALUES (N'1521414098724851712', N'2', N'2', N'http://192.168.50.1:9806/', N'checkStockJobHandler', N'8', NULL, N'0', N'2022-05-03 16:59:22.3000000', N'200', N'任务触发类型：Cron触发<br>调度机器：192.168.50.1<br>执行器-注册方式：自动注册<br>执行器-地址列表：[http://192.168.50.1:9806/]<br>路由策略：故障转移<br>阻塞处理策略：丢弃后续调度<br>任务超时时间：0<br>失败重试次数：0<br><br><span style="color:#00c0ef;" > >>>>>>>>>>>触发调度<<<<<<<<<<< </span><br>心跳检测：<br>address：http://192.168.50.1:9806/<br>code：200<br>msg：null<br><br>触发调度：<br>address：http://192.168.50.1:9806/<br>code：200<br>msg：null', N'2022-05-03 16:59:22.5040000', N'200', N'', N'0')
+    GO
+
+    INSERT INTO [dbo].[xxl_job_log]  VALUES (N'1521414119667011584', N'2', N'2', N'http://192.168.50.1:9806/', N'checkStockJobHandler', N'8', NULL, N'0', N'2022-05-03 16:59:27.2930000', N'200', N'任务触发类型：Cron触发<br>调度机器：192.168.50.1<br>执行器-注册方式：自动注册<br>执行器-地址列表：[http://192.168.50.1:9806/]<br>路由策略：故障转移<br>阻塞处理策略：丢弃后续调度<br>任务超时时间：0<br>失败重试次数：0<br><br><span style="color:#00c0ef;" > >>>>>>>>>>>触发调度<<<<<<<<<<< </span><br>心跳检测：<br>address：http://192.168.50.1:9806/<br>code：200<br>msg：null<br><br>触发调度：<br>address：http://192.168.50.1:9806/<br>code：200<br>msg：null', N'2022-05-03 16:59:27.5040000', N'200', N'', N'0')
+    GO
+
+    INSERT INTO [dbo].[xxl_job_log]  VALUES (N'1521414140634337280', N'2', N'2', N'http://192.168.50.1:9806/', N'checkStockJobHandler', N'8', NULL, N'0', N'2022-05-03 16:59:32.2920000', N'200', N'任务触发类型：Cron触发<br>调度机器：192.168.50.1<br>执行器-注册方式：自动注册<br>执行器-地址列表：[http://192.168.50.1:9806/]<br>路由策略：故障转移<br>阻塞处理策略：丢弃后续调度<br>任务超时时间：0<br>失败重试次数：0<br><br><span style="color:#00c0ef;" > >>>>>>>>>>>触发调度<<<<<<<<<<< </span><br>心跳检测：<br>address：http://192.168.50.1:9806/<br>code：200<br>msg：null<br><br>触发调度：<br>address：http://192.168.50.1:9806/<br>code：200<br>msg：null', N'2022-05-03 16:59:32.5070000', N'200', N'', N'0')
+    GO
+
+    INSERT INTO [dbo].[xxl_job_log]  VALUES (N'1521414161601662976', N'2', N'2', N'http://192.168.50.1:9806/', N'checkStockJobHandler', N'8', NULL, N'0', N'2022-05-03 16:59:37.2910000', N'200', N'任务触发类型：Cron触发<br>调度机器：192.168.50.1<br>执行器-注册方式：自动注册<br>执行器-地址列表：[http://192.168.50.1:9806/]<br>路由策略：故障转移<br>阻塞处理策略：丢弃后续调度<br>任务超时时间：0<br>失败重试次数：0<br><br><span style="color:#00c0ef;" > >>>>>>>>>>>触发调度<<<<<<<<<<< </span><br>心跳检测：<br>address：http://192.168.50.1:9806/<br>code：200<br>msg：null<br><br>触发调度：<br>address：http://192.168.50.1:9806/<br>code：200<br>msg：null', N'2022-05-03 16:59:37.5050000', N'200', N'', N'0')
+    GO
+
+    INSERT INTO [dbo].[xxl_job_log]  VALUES (N'1521414182615126016', N'2', N'2', N'http://192.168.50.1:9806/', N'checkStockJobHandler', N'8', NULL, N'0', N'2022-05-03 16:59:42.3010000', N'200', N'任务触发类型：Cron触发<br>调度机器：192.168.50.1<br>执行器-注册方式：自动注册<br>执行器-地址列表：[http://192.168.50.1:9806/]<br>路由策略：故障转移<br>阻塞处理策略：丢弃后续调度<br>任务超时时间：0<br>失败重试次数：0<br><br><span style="color:#00c0ef;" > >>>>>>>>>>>触发调度<<<<<<<<<<< </span><br>心跳检测：<br>address：http://192.168.50.1:9806/<br>code：200<br>msg：null<br><br>触发调度：<br>address：http://192.168.50.1:9806/<br>code：200<br>msg：null', N'2022-05-03 16:59:42.5300000', N'200', N'', N'0')
+    GO
+
+    INSERT INTO [dbo].[xxl_job_log]  VALUES (N'1521414203595034624', N'2', N'2', N'http://192.168.50.1:9806/', N'checkStockJobHandler', N'8', NULL, N'0', N'2022-05-03 16:59:47.3030000', N'200', N'任务触发类型：Cron触发<br>调度机器：192.168.50.1<br>执行器-注册方式：自动注册<br>执行器-地址列表：[http://192.168.50.1:9806/]<br>路由策略：故障转移<br>阻塞处理策略：丢弃后续调度<br>任务超时时间：0<br>失败重试次数：0<br><br><span style="color:#00c0ef;" > >>>>>>>>>>>触发调度<<<<<<<<<<< </span><br>心跳检测：<br>address：http://192.168.50.1:9806/<br>code：200<br>msg：null<br><br>触发调度：<br>address：http://192.168.50.1:9806/<br>code：200<br>msg：null', N'2022-05-03 16:59:47.5050000', N'200', N'', N'0')
     GO
 
 
@@ -434,11 +471,11 @@ DROP TABLE [dbo].[xxl_job_log_report]
     GO
 
 CREATE TABLE [dbo].[xxl_job_log_report] (
-    [id] int  NOT NULL,
+    [id] bigint  NOT NULL,
     [trigger_day] datetime2(7)  NULL,
-    [running_count] int  NOT NULL,
-    [suc_count] int  NOT NULL,
-    [fail_count] int  NOT NULL,
+    [running_count] int DEFAULT ((0)) NOT NULL,
+    [suc_count] int DEFAULT ((0)) NOT NULL,
+    [fail_count] int DEFAULT ((0)) NOT NULL,
     [update_time] datetime2(7)  NULL
     )
     GO
@@ -478,13 +515,16 @@ ALTER TABLE [dbo].[xxl_job_log_report] SET (LOCK_ESCALATION = TABLE)
     -- ----------------------------
 -- Records of xxl_job_log_report
 -- ----------------------------
-    INSERT INTO [dbo].[xxl_job_log_report]  VALUES (N'1', N'2022-05-02 00:00:00.0000000', N'0', N'0', N'1', NULL)
+    INSERT INTO [dbo].[xxl_job_log_report]  VALUES (N'1', N'2022-05-02 00:00:00.0000000', N'0', N'0', N'0', NULL)
     GO
 
     INSERT INTO [dbo].[xxl_job_log_report]  VALUES (N'2', N'2022-05-01 00:00:00.0000000', N'0', N'0', N'0', NULL)
     GO
 
     INSERT INTO [dbo].[xxl_job_log_report]  VALUES (N'3', N'2022-04-30 00:00:00.0000000', N'0', N'0', N'0', NULL)
+    GO
+
+    INSERT INTO [dbo].[xxl_job_log_report]  VALUES (N'1521398998664220672', N'2022-05-03 00:00:00.0000000', N'0', N'8', N'0', NULL)
     GO
 
 
@@ -496,7 +536,7 @@ DROP TABLE [dbo].[xxl_job_logglue]
     GO
 
 CREATE TABLE [dbo].[xxl_job_logglue] (
-    [id] int  NOT NULL,
+    [id] bigint  NOT NULL,
     [job_id] int  NOT NULL,
     [glue_type] nvarchar(50) COLLATE Chinese_PRC_CI_AS  NULL,
     [glue_source] nvarchar(max) COLLATE Chinese_PRC_CI_AS  NULL,
@@ -546,7 +586,7 @@ DROP TABLE [dbo].[xxl_job_registry]
     GO
 
 CREATE TABLE [dbo].[xxl_job_registry] (
-    [id] int  NOT NULL,
+    [id] bigint  NOT NULL,
     [registry_group] nvarchar(50) COLLATE Chinese_PRC_CI_AS  NOT NULL,
     [registry_key] nvarchar(255) COLLATE Chinese_PRC_CI_AS  NOT NULL,
     [registry_value] nvarchar(255) COLLATE Chinese_PRC_CI_AS  NOT NULL,
@@ -559,6 +599,13 @@ ALTER TABLE [dbo].[xxl_job_registry] SET (LOCK_ESCALATION = TABLE)
 
 
     -- ----------------------------
+-- Records of xxl_job_registry
+-- ----------------------------
+    INSERT INTO [dbo].[xxl_job_registry]  VALUES (N'1521413334623326208', N'EXECUTOR', N'wms-main-api', N'http://192.168.50.1:9806/', N'2022-05-03 17:02:50.1710000')
+    GO
+
+
+    -- ----------------------------
 -- Table structure for xxl_job_user
 -- ----------------------------
     IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID(N'[dbo].[xxl_job_user]') AND type IN ('U'))
@@ -566,7 +613,7 @@ DROP TABLE [dbo].[xxl_job_user]
     GO
 
 CREATE TABLE [dbo].[xxl_job_user] (
-    [id] int  NOT NULL,
+    [id] bigint  NOT NULL,
     [username] nvarchar(50) COLLATE Chinese_PRC_CI_AS  NOT NULL,
     [password] nvarchar(50) COLLATE Chinese_PRC_CI_AS  NOT NULL,
     [role] tinyint  NOT NULL,
@@ -612,11 +659,20 @@ ALTER TABLE [dbo].[xxl_job_user] SET (LOCK_ESCALATION = TABLE)
     INSERT INTO [dbo].[xxl_job_user]  VALUES (N'1', N'admin', N'e10adc3949ba59abbe56e057f20f883e', N'1', NULL)
     GO
 
+    INSERT INTO [dbo].[xxl_job_user]  VALUES (N'2', N'devtest', N'e10adc3949ba59abbe56e057f20f883e', N'0', N'1')
+    GO
+
+    INSERT INTO [dbo].[xxl_job_user]  VALUES (N'3', N'mytest', N'ff9830c42660c1dd1942844f8069b74a', N'0', N'2')
+    GO
+
+    INSERT INTO [dbo].[xxl_job_user]  VALUES (N'4', N'wmsdev', N'e10adc3949ba59abbe56e057f20f883e', N'0', N'2')
+    GO
+
 
 -- ----------------------------
 -- Primary Key structure for table xxl_job_group
 -- ----------------------------
-ALTER TABLE [dbo].[xxl_job_group] ADD CONSTRAINT [PK__xxl_job___3213E83FBD03F4F1] PRIMARY KEY CLUSTERED ([id])
+ALTER TABLE [dbo].[xxl_job_group] ADD CONSTRAINT [PK__xxl_job___3213E83F8A524CD6] PRIMARY KEY CLUSTERED ([id])
     WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
     ON [PRIMARY]
     GO
@@ -625,7 +681,7 @@ ALTER TABLE [dbo].[xxl_job_group] ADD CONSTRAINT [PK__xxl_job___3213E83FBD03F4F1
 -- ----------------------------
 -- Primary Key structure for table xxl_job_info
 -- ----------------------------
-ALTER TABLE [dbo].[xxl_job_info] ADD CONSTRAINT [PK__xxl_job___3213E83FD619D362] PRIMARY KEY CLUSTERED ([id])
+ALTER TABLE [dbo].[xxl_job_info] ADD CONSTRAINT [PK__xxl_job___3213E83F298CE0B7] PRIMARY KEY CLUSTERED ([id])
     WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
     ON [PRIMARY]
     GO
@@ -634,7 +690,7 @@ ALTER TABLE [dbo].[xxl_job_info] ADD CONSTRAINT [PK__xxl_job___3213E83FD619D362]
 -- ----------------------------
 -- Primary Key structure for table xxl_job_lock
 -- ----------------------------
-ALTER TABLE [dbo].[xxl_job_lock] ADD CONSTRAINT [PK__xxl_job___7BE7AEAB0B235DF3] PRIMARY KEY CLUSTERED ([lock_name])
+ALTER TABLE [dbo].[xxl_job_lock] ADD CONSTRAINT [PK__xxl_job___7BE7AEAB0D35D594] PRIMARY KEY CLUSTERED ([lock_name])
     WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
     ON [PRIMARY]
     GO
@@ -659,7 +715,7 @@ GO
 -- ----------------------------
 -- Primary Key structure for table xxl_job_log
 -- ----------------------------
-ALTER TABLE [dbo].[xxl_job_log] ADD CONSTRAINT [PK__xxl_job___3213E83FEFC2013B] PRIMARY KEY CLUSTERED ([id])
+ALTER TABLE [dbo].[xxl_job_log] ADD CONSTRAINT [PK__xxl_job___3213E83FCD23599E] PRIMARY KEY CLUSTERED ([id])
     WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
     ON [PRIMARY]
     GO
@@ -678,7 +734,7 @@ GO
 -- ----------------------------
 -- Primary Key structure for table xxl_job_log_report
 -- ----------------------------
-ALTER TABLE [dbo].[xxl_job_log_report] ADD CONSTRAINT [PK__xxl_job___3213E83FD0D2D974] PRIMARY KEY CLUSTERED ([id])
+ALTER TABLE [dbo].[xxl_job_log_report] ADD CONSTRAINT [PK__xxl_job___3213E83F7A6FC514] PRIMARY KEY CLUSTERED ([id])
     WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
     ON [PRIMARY]
     GO
@@ -687,7 +743,7 @@ ALTER TABLE [dbo].[xxl_job_log_report] ADD CONSTRAINT [PK__xxl_job___3213E83FD0D
 -- ----------------------------
 -- Primary Key structure for table xxl_job_logglue
 -- ----------------------------
-ALTER TABLE [dbo].[xxl_job_logglue] ADD CONSTRAINT [PK__xxl_job___3213E83FDE37FCEB] PRIMARY KEY CLUSTERED ([id])
+ALTER TABLE [dbo].[xxl_job_logglue] ADD CONSTRAINT [PK__xxl_job___3213E83FA8F81DE7] PRIMARY KEY CLUSTERED ([id])
     WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
     ON [PRIMARY]
     GO
@@ -708,7 +764,7 @@ GO
 -- ----------------------------
 -- Primary Key structure for table xxl_job_registry
 -- ----------------------------
-ALTER TABLE [dbo].[xxl_job_registry] ADD CONSTRAINT [PK__xxl_job___3213E83F85B6EF18] PRIMARY KEY CLUSTERED ([id])
+ALTER TABLE [dbo].[xxl_job_registry] ADD CONSTRAINT [PK__xxl_job___3213E83FC3F3844A] PRIMARY KEY CLUSTERED ([id])
     WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
     ON [PRIMARY]
     GO
@@ -727,7 +783,7 @@ GO
 -- ----------------------------
 -- Primary Key structure for table xxl_job_user
 -- ----------------------------
-ALTER TABLE [dbo].[xxl_job_user] ADD CONSTRAINT [PK__xxl_job___3213E83F83BA0362] PRIMARY KEY CLUSTERED ([id])
+ALTER TABLE [dbo].[xxl_job_user] ADD CONSTRAINT [PK__xxl_job___3213E83F35CED38C] PRIMARY KEY CLUSTERED ([id])
     WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
     ON [PRIMARY]
     GO
