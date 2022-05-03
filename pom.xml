@@ -30,6 +30,7 @@
         <mysql-connector-java.version>8.0.23</mysql-connector-java.version>
         <mssql-connector-java.version>7.4.1.jre8</mssql-connector-java.version>
         <oracle-connector-java.version>11.2.0.3</oracle-connector-java.version>
+        <pgsql-connector-java.version>9.4.1212</pgsql-connector-java.version>
 
         <slf4j-api.version>1.7.30</slf4j-api.version>
         <junit.version>5.7.1</junit.version>
@@ -156,6 +157,13 @@
             <groupId>com.oracle</groupId>
             <artifactId>ojdbc6</artifactId>
             <version>${oracle-connector-java.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <!-- postgresql jdbc driver -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${pgsql-connector-java.version}</version>
             <scope>runtime</scope>
         </dependency>
 
