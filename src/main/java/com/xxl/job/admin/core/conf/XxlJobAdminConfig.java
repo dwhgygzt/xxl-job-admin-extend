@@ -197,17 +197,11 @@ public class XxlJobAdminConfig implements InitializingBean, DisposableBean {
     }
 
     public int getTriggerPoolFastMax() {
-        if (triggerPoolFastMax < 200) {
-            return 200;
-        }
-        return triggerPoolFastMax;
+        return Math.max(triggerPoolFastMax, 200);
     }
 
     public int getTriggerPoolSlowMax() {
-        if (triggerPoolSlowMax < 100) {
-            return 100;
-        }
-        return triggerPoolSlowMax;
+        return Math.max(triggerPoolSlowMax, 100);
     }
 
     public int getLogretentiondays() {

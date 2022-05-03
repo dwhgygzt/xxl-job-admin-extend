@@ -86,7 +86,7 @@ public class JobLogController {
     @ResponseBody
     public ReturnT<List<XxlJobInfo>> getJobsByGroup(int jobGroup) {
         List<XxlJobInfo> list = xxlJobInfoDao.getJobsByGroup(jobGroup);
-        return new ReturnT<List<XxlJobInfo>>(list);
+        return new ReturnT<>(list);
     }
 
     @RequestMapping("/pageList")
@@ -142,7 +142,7 @@ public class JobLogController {
         long listCount = pageInfo.getTotal();
 
         // package result
-        Map<String, Object> maps = new HashMap<String, Object>();
+        Map<String, Object> maps = new HashMap<>();
         // 总记录数
         maps.put("recordsTotal", listCount);
         // 过滤后的总记录数
@@ -156,7 +156,6 @@ public class JobLogController {
     public String logDetailPage(String id, Model model) {
 
         // base check
-        ReturnT<String> logStatue = ReturnT.SUCCESS;
         XxlJobLog jobLog = xxlJobLogDao.load(Long.parseLong(id));
         if (jobLog == null) {
             throw new RuntimeException(I18nUtil.getString("joblog_logid_unvalid"));
@@ -187,7 +186,7 @@ public class JobLogController {
 
             return logResult;
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            logger.error(e.getMessage());
             return new ReturnT<>(ReturnT.FAIL_CODE, e.getMessage());
         }
     }
@@ -220,7 +219,7 @@ public class JobLogController {
             log.setHandleMsg(I18nUtil.getString("joblog_kill_log_byman") + ":" + (runResult.getMsg() != null ? runResult.getMsg() : ""));
             log.setHandleTime(new Date());
             XxlJobCompleter.updateHandleInfoAndFinish(log);
-            return new ReturnT<String>(runResult.getMsg());
+            return new ReturnT<>(runResult.getMsg());
         } else {
             return new ReturnT<>(500, runResult.getMsg());
         }

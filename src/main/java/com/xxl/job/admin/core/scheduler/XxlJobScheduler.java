@@ -16,11 +16,11 @@ import java.util.concurrent.ConcurrentMap;
  * @author xuxueli 2018-10-28 00:18:17
  */
 
-public class XxlJobScheduler  {
+public class XxlJobScheduler {
     private static final Logger logger = LoggerFactory.getLogger(XxlJobScheduler.class);
 
 
-    public void init() throws Exception {
+    public void init() {
         // init i18n
         initI18n();
 
@@ -45,8 +45,8 @@ public class XxlJobScheduler  {
         logger.info(">>>>>>>>> init xxl-job admin success.");
     }
 
-    
-    public void destroy() throws Exception {
+
+    public void destroy() {
 
         // stop-schedule
         JobScheduleHelper.getInstance().toStop();
@@ -70,17 +70,18 @@ public class XxlJobScheduler  {
 
     // ---------------------- I18n ----------------------
 
-    private void initI18n(){
-        for (ExecutorBlockStrategyEnum item: ExecutorBlockStrategyEnum.values()) {
+    private void initI18n() {
+        for (ExecutorBlockStrategyEnum item : ExecutorBlockStrategyEnum.values()) {
             item.setTitle(I18nUtil.getString("jobconf_block_".concat(item.name())));
         }
     }
 
     // ---------------------- executor-client ----------------------
-    private static ConcurrentMap<String, ExecutorBiz> executorBizRepository = new ConcurrentHashMap<String, ExecutorBiz>();
-    public static ExecutorBiz getExecutorBiz(String address) throws Exception {
+    private static ConcurrentMap<String, ExecutorBiz> executorBizRepository = new ConcurrentHashMap<>();
+
+    public static ExecutorBiz getExecutorBiz(String address) {
         // valid
-        if (address==null || address.trim().length()==0) {
+        if (address == null || address.trim().length() == 0) {
             return null;
         }
 

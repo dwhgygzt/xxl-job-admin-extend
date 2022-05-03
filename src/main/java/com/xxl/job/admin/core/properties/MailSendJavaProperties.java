@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 /**
  * 邮件发送参数配置
  *
- * @author <a href="mailto:guzhongtao@middol.com">guzhongtao</a>
+ * @author guzt
  */
 @Component
 @ConfigurationProperties(prefix = "mailsend.cfg.javamail")

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 /**
  * XXL-JOB参数配置
  *
- * @author <a href="mailto:guzhongtao@middol.com">guzhongtao</a>
+ * @author guzt
  */
 @Component
 @ConfigurationProperties(prefix = "xxl.job")

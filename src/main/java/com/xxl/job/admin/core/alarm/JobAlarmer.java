@@ -14,6 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @author xuxueli
+ */
 @Component
 public class JobAlarmer implements ApplicationContextAware, InitializingBean {
     private static Logger logger = LoggerFactory.getLogger(JobAlarmer.class);
@@ -27,26 +30,26 @@ public class JobAlarmer implements ApplicationContextAware, InitializingBean {
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         Map<String, JobAlarm> serviceBeanMap = applicationContext.getBeansOfType(JobAlarm.class);
-        if (serviceBeanMap != null && serviceBeanMap.size() > 0) {
-            jobAlarmList = new ArrayList<JobAlarm>(serviceBeanMap.values());
+        if (serviceBeanMap.size() > 0) {
+            jobAlarmList = new ArrayList<>(serviceBeanMap.values());
         }
     }
 
     /**
      * job alarm
      *
-     * @param info
-     * @param jobLog
-     * @return
+     * @param info   ignore
+     * @param jobLog ignore
+     * @return ignore
      */
     public boolean alarm(XxlJobInfo info, XxlJobLog jobLog) {
 
         boolean result = false;
-        if (jobAlarmList!=null && jobAlarmList.size()>0) {
+        if (jobAlarmList != null && jobAlarmList.size() > 0) {
             result = true;  // success means all-success
-            for (JobAlarm alarm: jobAlarmList) {
+            for (JobAlarm alarm : jobAlarmList) {
                 boolean resultItem = false;
                 try {
                     resultItem = alarm.doAlarm(info, jobLog);

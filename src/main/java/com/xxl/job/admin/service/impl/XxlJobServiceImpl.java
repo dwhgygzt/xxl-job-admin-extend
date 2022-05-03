@@ -1,5 +1,6 @@
 package com.xxl.job.admin.service.impl;
 
+import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.StrUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -186,12 +187,7 @@ public class XxlJobServiceImpl implements XxlJobService {
     }
 
     private boolean isNumeric(String str) {
-        try {
-            Integer.parseInt(str);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
+        return NumberUtil.isNumber(str);
     }
 
     @Override
