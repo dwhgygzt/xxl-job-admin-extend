@@ -176,7 +176,11 @@ public class XxlJobServiceImpl implements XxlJobService {
         jobInfo.setGlueUpdatetime(new Date());
         jobInfo.setTriggerLastTime(0L);
         synchronized (this) {
-            jobInfo.setId(xxlJobInfoDao.maxId() + 1);
+            Integer maxId = xxlJobInfoDao.maxId();
+            if (maxId == null) {
+                maxId = 0;
+            }
+            jobInfo.setId(maxId + 1);
         }
         xxlJobInfoDao.insertSelective(jobInfo);
         if (jobInfo.getId() < 1) {
@@ -425,7 +429,7 @@ public class XxlJobServiceImpl implements XxlJobService {
 
         Example example = new Example(XxlJobLogReport.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andBetween("triggerDay",startDate,endDate);
+        criteria.andBetween("triggerDay", startDate, endDate);
         example.orderBy("triggerDay");
         List<XxlJobLogReport> logReportList = xxlJobLogReportDao.selectByExample(example);
 

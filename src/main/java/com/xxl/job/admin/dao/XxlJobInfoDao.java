@@ -11,6 +11,6 @@ import com.xxl.job.admin.core.model.XxlJobInfo;
  */
 public interface XxlJobInfoDao extends MyBaseMapper<XxlJobInfo> {
 
-    int maxId();
+    Integer maxId();
 
 }
